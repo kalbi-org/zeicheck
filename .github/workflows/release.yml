@@ -18,14 +18,13 @@ jobs:
 
       - run: npm ci
       - run: npm run typecheck
+      - run: npm run build
       - run: npm test
 
       - name: Set version from release tag
         run: |
           VERSION="${GITHUB_REF_NAME#v}"
           npm version "$VERSION" --no-git-tag-version
-
-      - run: npm run build
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
