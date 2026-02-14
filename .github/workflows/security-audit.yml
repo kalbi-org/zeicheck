@@ -1,0 +1,222 @@
+name: Security Audit
+
+on:
+  schedule:
+    # 毎週日曜 00:00 UTC（月曜 09:00 JST）
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  security-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+
+      # -------------------------------------------------------
+      # a. npm audit — 脆弱性スキャン
+      # -------------------------------------------------------
+      - name: npm audit
+        id: npm_audit
+        run: |
+          echo "## npm audit" > audit-report.txt
+          if npm audit --audit-level=moderate >> audit-report.txt 2>&1; then
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # b. license-checker — ライセンス互換性チェック
+      # -------------------------------------------------------
+      - name: License check
+        id: license_check
+        run: |
+          echo "## License Check" > license-report.txt
+          npx license-checker --production --json > license-full.json 2>&1 || true
+
+          # MIT 以外の問題のあるライセンスを検出
+          VIOLATIONS=$(node -e "
+            const data = require('./license-full.json');
+            const allowed = ['MIT', 'ISC', 'BSD-2-Clause', 'BSD-3-Clause', 'Apache-2.0', '0BSD', 'BlueOak-1.0.0', 'Unlicense', 'CC0-1.0', 'CC-BY-3.0', 'CC-BY-4.0', 'Python-2.0'];
+            const violations = [];
+            for (const [pkg, info] of Object.entries(data)) {
+              const licenses = String(info.licenses || '');
+              const parts = licenses.split(/[;,()]/).map(s => s.trim()).filter(Boolean);
+              const ok = parts.some(p => allowed.includes(p));
+              if (!ok) violations.push(pkg + ' (' + licenses + ')');
+            }
+            if (violations.length > 0) {
+              console.log('以下のパッケージに互換性の問題がある可能性があります:');
+              violations.forEach(v => console.log('- ' + v));
+            } else {
+              console.log('全ての production 依存パッケージが許可ライセンスに準拠しています。');
+            }
+            process.exit(violations.length > 0 ? 1 : 0);
+          " 2>&1) || true
+
+          echo "$VIOLATIONS" >> license-report.txt
+
+          if echo "$VIOLATIONS" | grep -q "互換性の問題"; then
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # c. typecheck — 型チェック整合性
+      # -------------------------------------------------------
+      - name: Type check
+        id: typecheck
+        run: |
+          echo "## Type Check" > typecheck-report.txt
+          if npm run typecheck >> typecheck-report.txt 2>&1; then
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # d. build & test — ビルド・テスト実行
+      # -------------------------------------------------------
+      - name: Build and test
+        id: build_test
+        run: |
+          echo "## Build & Test" > build-test-report.txt
+          BUILD_OK=true
+          TEST_OK=true
+
+          echo "### Build" >> build-test-report.txt
+          if ! npm run build >> build-test-report.txt 2>&1; then
+            BUILD_OK=false
+          fi
+
+          echo "" >> build-test-report.txt
+          echo "### Test" >> build-test-report.txt
+          if ! npm test >> build-test-report.txt 2>&1; then
+            TEST_OK=false
+          fi
+
+          if [ "$BUILD_OK" = true ] && [ "$TEST_OK" = true ]; then
+            echo "result=pass" >> "$GITHUB_OUTPUT"
+          else
+            echo "result=fail" >> "$GITHUB_OUTPUT"
+          fi
+
+      # -------------------------------------------------------
+      # GitHub Issue 作成
+      # -------------------------------------------------------
+      - name: Create audit issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          NPM_AUDIT_RESULT: ${{ steps.npm_audit.outputs.result }}
+          LICENSE_RESULT: ${{ steps.license_check.outputs.result }}
+          TYPECHECK_RESULT: ${{ steps.typecheck.outputs.result }}
+          BUILD_TEST_RESULT: ${{ steps.build_test.outputs.result }}
+        with:
+          script: |
+            const fs = require('fs');
+
+            const icon = (r) => r === 'pass' ? '✅' : '❌';
+            const npmAudit = process.env.NPM_AUDIT_RESULT || 'unknown';
+            const license = process.env.LICENSE_RESULT || 'unknown';
+            const typecheck = process.env.TYPECHECK_RESULT || 'unknown';
+            const buildTest = process.env.BUILD_TEST_RESULT || 'unknown';
+
+            const allPass = [npmAudit, license, typecheck, buildTest].every(r => r === 'pass');
+            const overallIcon = allPass ? '✅' : '🚨';
+
+            const readFile = (path) => {
+              try { return fs.readFileSync(path, 'utf8'); } catch { return '（レポートなし）'; }
+            };
+
+            const auditReport = readFile('audit-report.txt');
+            const licenseReport = readFile('license-report.txt');
+            const typecheckReport = readFile('typecheck-report.txt');
+            const buildTestReport = readFile('build-test-report.txt');
+
+            const now = new Date();
+            const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+            const dateStr = jst.toISOString().split('T')[0];
+
+            const title = `${overallIcon} セキュリティ監査レポート — ${dateStr}`;
+
+            const body = `# セキュリティ監査レポート
+
+            **実行日時**: ${jst.toISOString().replace('T', ' ').substring(0, 19)} JST
+            **ワークフロー**: [実行ログ](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
+
+            ## サマリー
+
+            | チェック項目 | 結果 |
+            |---|---|
+            | 脆弱性スキャン (npm audit) | ${icon(npmAudit)} ${npmAudit} |
+            | ライセンス互換性 | ${icon(license)} ${license} |
+            | 型チェック | ${icon(typecheck)} ${typecheck} |
+            | ビルド & テスト | ${icon(buildTest)} ${buildTest} |
+
+            ---
+
+            ## 詳細レポート
+
+            ### 脆弱性スキャン (npm audit)
+
+            \`\`\`
+            ${auditReport}
+            \`\`\`
+
+            ### ライセンス互換性
+
+            \`\`\`
+            ${licenseReport}
+            \`\`\`
+
+            ### 型チェック
+
+            \`\`\`
+            ${typecheckReport}
+            \`\`\`
+
+            ### ビルド & テスト
+
+            \`\`\`
+            ${buildTestReport}
+            \`\`\`
+            `.replace(/^            /gm, '');
+
+            // ラベルを作成（存在しない場合）
+            for (const label of ['audit', 'security']) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                });
+              } catch {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                  color: label === 'security' ? 'e11d48' : '6366f1',
+                  description: label === 'security' ? 'セキュリティ関連' : '自動監査レポート',
+                });
+              }
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['audit', 'security'],
+            });

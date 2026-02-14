@@ -18,6 +18,9 @@ export function runRules(rules: Rule[], ctx: RuleContext): RuleDiagnostic[] {
 
     if (severity === "off") continue;
 
+    const { applicableTo } = rule.meta;
+    if (applicableTo && !applicableTo.includes(ctx.taxReturn.returnType)) continue;
+
     const results = rule.check(ctx);
     for (const diag of results) {
       diagnostics.push({ ...diag, severity });

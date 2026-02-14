@@ -15,7 +15,11 @@ async function runCli(
     return { stdout, stderr, exitCode: 0 };
   } catch (error: unknown) {
     const e = error as { stdout: string; stderr: string; code: number };
-    return { stdout: e.stdout ?? "", stderr: e.stderr ?? "", exitCode: e.code ?? 1 };
+    return {
+      stdout: e.stdout ?? "",
+      stderr: e.stderr ?? "",
+      exitCode: e.code ?? 1,
+    };
   }
 }
 
@@ -52,6 +56,22 @@ describe("CLI integration", () => {
     const { exitCode } = await runCli([
       "check",
       resolve(FIXTURES, "valid-return.xtx"),
+    ]);
+    expect(exitCode).toBe(0);
+  });
+
+  it("check validates a valid corporate return with exit code 0", async () => {
+    const { exitCode } = await runCli([
+      "check",
+      resolve(FIXTURES, "valid-corporate-return.xtx"),
+    ]);
+    expect(exitCode).toBe(0);
+  });
+
+  it("check validates a valid individual (wage earner) return with exit code 0", async () => {
+    const { exitCode } = await runCli([
+      "check",
+      resolve(FIXTURES, "valid-individual-return.xtx"),
     ]);
     expect(exitCode).toBe(0);
   });

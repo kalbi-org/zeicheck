@@ -31,6 +31,22 @@ import { yearOverYearChangeRule } from "./continuity/year-over-year-change.js";
 // Home office rules
 import { reasonableRatioRule } from "./home-office/reasonable-ratio.js";
 
+// Corporate rules
+import {
+  corporateBsEquationRule,
+  corporatePlChainRule,
+  corporateExpenseTotalRule,
+  corporateBsPlBridgeRule,
+  betsu4AccountingProfitRule,
+  betsu4TaxableIncomeRule,
+  betsu1MatchRule,
+  capitalUnder10mRule,
+  officerCompensationRule,
+  entertainmentLimitRule,
+  smallCorpTaxRateRule,
+  retainedEarningsContinuityRule,
+} from "./corporate/index.js";
+
 const ruleRegistry = new Map<string, Rule>();
 
 export function registerRule(rule: Rule): void {
@@ -45,7 +61,7 @@ export function getRule(id: string): Rule | undefined {
   return ruleRegistry.get(id);
 }
 
-// Register all rules
+// Register individual rules
 registerRule(bsEquationRule);
 registerRule(openingOwnerEquityRule);
 registerRule(motoireKinFormulaRule);
@@ -63,6 +79,20 @@ registerRule(smallAssetThresholdRule);
 registerRule(openingClosingMatchRule);
 registerRule(yearOverYearChangeRule);
 registerRule(reasonableRatioRule);
+
+// Register corporate rules
+registerRule(corporateBsEquationRule);
+registerRule(corporatePlChainRule);
+registerRule(corporateExpenseTotalRule);
+registerRule(corporateBsPlBridgeRule);
+registerRule(betsu4AccountingProfitRule);
+registerRule(betsu4TaxableIncomeRule);
+registerRule(betsu1MatchRule);
+registerRule(capitalUnder10mRule);
+registerRule(officerCompensationRule);
+registerRule(entertainmentLimitRule);
+registerRule(smallCorpTaxRateRule);
+registerRule(retainedEarningsContinuityRule);
 
 export type { Rule, RuleContext, RuleConfig, ResolvedConfig, RuleDiagnostic, RuleMeta, Severity } from "./types.js";
 export { runRules } from "./rule-runner.js";

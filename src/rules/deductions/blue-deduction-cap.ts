@@ -12,9 +12,11 @@ export const blueDeductionCapRule: Rule = {
     description:
       "青色申告特別控除額は、控除前の所得金額を超えることはできません。所得を超える場合は所得金額が上限となります。",
     severity: "warning",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const deduction = ctx.taxReturn.taxFormA.blueReturnDeduction;
     const income = ctx.taxReturn.incomeStatement.operatingIncome;
 

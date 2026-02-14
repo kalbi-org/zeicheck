@@ -13,10 +13,13 @@ export const motoireKinFormulaRule: Rule = {
     description:
       "元入金(当期) = 元入金(前期) + 青色申告特別控除前所得(前期) + 事業主借(前期末) - 事業主貸(前期末) であるべきです。前年データが必要です。",
     severity: "error",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
-    if (!ctx.priorYear) return [];
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
+    if (!ctx.priorYear || ctx.priorYear.returnType !== "sole-proprietor")
+      return [];
 
     const priorBs = ctx.priorYear.balanceSheet;
     const currentBs = ctx.taxReturn.balanceSheet;

@@ -22,15 +22,20 @@ export const usefulLifeRatesRule: Rule = {
     description:
       "減価償却資産の耐用年数が法定耐用年数テーブルと一致するか確認します。",
     severity: "warning",
+    applicableTo: ["sole-proprietor", "corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType === "individual") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const assets = ctx.taxReturn.depreciationSchedule.assets;
 
     for (const asset of assets) {
       for (const [keyword, validLives] of Object.entries(COMMON_USEFUL_LIVES)) {
-        if (asset.name.includes(keyword) && !validLives.includes(asset.usefulLife)) {
+        if (
+          asset.name.includes(keyword) &&
+          !validLives.includes(asset.usefulLife)
+        ) {
           diagnostics.push({
             ruleId: this.meta.id,
             severity: this.meta.severity,

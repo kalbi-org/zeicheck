@@ -13,9 +13,11 @@ export const blueDeductionEligibilityRule: Rule = {
     description:
       "65万円の青色申告特別控除にはe-Taxによる申告または電子帳簿保存が必要です（令和2年分以降）。要件を満たさない場合は55万円が上限です。",
     severity: "info",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const deduction = ctx.taxReturn.taxFormA.blueReturnDeduction;
     const limit55 = yen(550000);
     const limit65 = yen(650000);

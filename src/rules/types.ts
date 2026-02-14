@@ -1,4 +1,5 @@
 import type { TaxReturn } from "../models/tax-return.js";
+import type { TaxReturnType } from "../models/types.js";
 
 export type Severity = "error" | "warning" | "info" | "off";
 
@@ -8,6 +9,7 @@ export interface RuleMeta {
   readonly description: string;
   readonly severity: Severity;
   readonly applicableYears?: readonly number[];
+  readonly applicableTo?: readonly TaxReturnType[];
 }
 
 export interface RuleDiagnostic {

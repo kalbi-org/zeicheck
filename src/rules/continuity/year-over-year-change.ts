@@ -19,10 +19,13 @@ export const yearOverYearChangeRule: Rule = {
     description:
       "売上・経費・所得が前年比で200%超の増加または80%超の減少がある場合に警告します。前年データが必要です。",
     severity: "warning",
+    applicableTo: ["sole-proprietor", "corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
     if (!ctx.priorYear) return [];
+    if (ctx.taxReturn.returnType === "individual") return [];
+    if (ctx.priorYear.returnType === "individual") return [];
 
     const diagnostics: RuleDiagnostic[] = [];
     const currentPl = ctx.taxReturn.incomeStatement;
@@ -41,14 +44,16 @@ export const yearOverYearChangeRule: Rule = {
           ruleId: this.meta.id,
           severity: this.meta.severity,
           message: `${label}が前年比${Math.round(ratio * 100)}%です（${formatYen(prior)} → ${formatYen(current)}）`,
-          details: "200%を超える大幅な増加があります。記帳内容をご確認ください。",
+          details:
+            "200%を超える大幅な増加があります。記帳内容をご確認ください。",
         });
       } else if (ratio < 0.2) {
         diagnostics.push({
           ruleId: this.meta.id,
           severity: this.meta.severity,
           message: `${label}が前年比${Math.round(ratio * 100)}%です（${formatYen(prior)} → ${formatYen(current)}）`,
-          details: "80%を超える大幅な減少があります。記帳内容をご確認ください。",
+          details:
+            "80%を超える大幅な減少があります。記帳内容をご確認ください。",
         });
       }
     }

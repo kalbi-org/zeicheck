@@ -12,9 +12,11 @@ export const openingOwnerEquityRule: Rule = {
     description:
       "事業主貸と事業主借は毎期首に元入金へ振替されるため、期首残高は0円であるべきです。",
     severity: "error",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const bs = ctx.taxReturn.balanceSheet;
 

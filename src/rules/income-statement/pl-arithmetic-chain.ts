@@ -8,9 +8,11 @@ export const plArithmeticChainRule: Rule = {
     name: "P/L Arithmetic Chain",
     description: "損益計算書の計算連鎖を検証する",
     severity: "error",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const pl = ctx.taxReturn.incomeStatement;
     const diagnostics: RuleDiagnostic[] = [];
 

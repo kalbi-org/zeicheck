@@ -12,9 +12,11 @@ export const nonNegativeCashRule: Rule = {
     description:
       "現金残高は0以上であるべきです。マイナス残高は記帳ミスの可能性があります。",
     severity: "warning",
+    applicableTo: ["sole-proprietor", "corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType === "individual") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const bs = ctx.taxReturn.balanceSheet;
 
