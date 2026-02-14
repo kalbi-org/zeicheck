@@ -4,11 +4,11 @@ const severitySchema = z.enum(["error", "warning", "info", "off"]);
 
 const ruleValueSchema = z.union([
   severitySchema,
-  z.tuple([severitySchema, z.record(z.unknown())]),
+  z.tuple([severitySchema, z.record(z.string(), z.unknown())]),
 ]);
 
 export const configSchema = z.object({
-  rules: z.record(ruleValueSchema).default({}),
+  rules: z.record(z.string(), ruleValueSchema).default({}),
   priorYearFile: z.string().optional(),
   format: z.enum(["stylish", "json"]).default("stylish"),
   warningsAsErrors: z.boolean().default(false),
