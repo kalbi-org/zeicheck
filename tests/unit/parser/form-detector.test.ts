@@ -16,9 +16,14 @@ describe("detectForms", () => {
     expect(result).toEqual([FormType.VCA]);
   });
 
-  it("detects all three form types", () => {
+  it("detects all three individual form types", () => {
     const result = detectForms(makeParsed(["ABA", "ABB", "VCA"]));
     expect(result).toEqual([FormType.ABA, FormType.ABB, FormType.VCA]);
+  });
+
+  it("detects corporate form IDs (HOA110, HOA410)", () => {
+    const result = detectForms(makeParsed(["HOA110", "HOA410"]));
+    expect(result).toEqual([FormType.HOA110, FormType.HOA410]);
   });
 
   it("ignores unknown form types", () => {

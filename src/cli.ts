@@ -10,7 +10,7 @@ const program = new Command();
 program
   .name("zeicheck")
   .description("e-Tax (xtx) 確定申告データの整合性チェッカー")
-  .version("0.1.0");
+  .version("0.4.0");
 
 program
   .command("check")
@@ -18,6 +18,7 @@ program
   .argument("<file>", "検証対象のxtxファイル")
   .option("-f, --format <format>", "出力形式 (stylish|json)", "stylish")
   .option("-c, --config <path>", "設定ファイルパス")
+  .option("--csv <file>", "法人決算書CSVファイル（HOT010形式）")
   .option("--prior-year <file>", "前年ファイル（継続性チェック用）")
   .option("--severity <level>", "最低表示レベル (error|warning|info)")
   .option("--no-color", "カラー出力を無効化")

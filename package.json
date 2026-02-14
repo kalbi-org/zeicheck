@@ -1,6 +1,6 @@
 {
   "name": "@kalbi/zeicheck",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "e-Tax (xtx) 確定申告データの整合性チェッカー",
   "type": "module",
   "main": "./dist/index.js",
@@ -51,6 +51,7 @@
   "dependencies": {
     "commander": "^14.0.3",
     "fast-xml-parser": "^5.2.0",
+    "iconv-lite": "^0.7.2",
     "picocolors": "^1.1.1",
     "zod": "^4.3.6"
   },

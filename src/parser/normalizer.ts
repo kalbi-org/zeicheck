@@ -16,7 +16,6 @@ import type { TaxFormA, TaxFormB } from "../models/tax-form.js";
 import {
   FormType,
   yen,
-  type AccountBalance,
   type FiscalYear,
   type Yen,
 } from "../models/types.js";
@@ -26,6 +25,7 @@ import type {
   CorporateReturn,
   TaxReturn,
 } from "../models/tax-return.js";
+import type { CorporateFinancials } from "./csv-reader.js";
 import { detectForms } from "./form-detector.js";
 import type { ParsedXtxFile } from "./types.js";
 
@@ -40,7 +40,7 @@ function accountBalance(
   fields: Map<string, string>,
   openingCode: string,
   closingCode: string,
-): AccountBalance {
+) {
   return {
     opening: yenField(fields, openingCode),
     closing: yenField(fields, closingCode),
@@ -163,122 +163,38 @@ function buildTaxFormB(abb: Map<string, string>): TaxFormB {
 
 // ── Corporate builders ──
 
-function buildCorporateIncomeStatement(
-  hok: Map<string, string>,
-): CorporateIncomeStatement {
+/** Build corporate tax form from HOA110 fields (official codes). */
+function buildCorporateTaxForm(fields: Map<string, string>): CorporateTaxFormMain {
   return {
-    revenue: yenField(hok, "ITA_HOK0010"),
-    cogs: {
-      openingInventory: yenField(hok, "ITA_HOK0020"),
-      purchases: yenField(hok, "ITA_HOK0030"),
-      closingInventory: yenField(hok, "ITA_HOK0040"),
-      total: yenField(hok, "ITA_HOK0050"),
-    },
-    grossProfit: yenField(hok, "ITA_HOK0060"),
-    expenses: {
-      taxes: yenField(hok, "ITA_HOK0100"),
-      insurance: yenField(hok, "ITA_HOK0110"),
-      repairs: yenField(hok, "ITA_HOK0120"),
-      depreciation: yenField(hok, "ITA_HOK0130"),
-      welfare: yenField(hok, "ITA_HOK0140"),
-      salaries: yenField(hok, "ITA_HOK0150"),
-      outsourcing: yenField(hok, "ITA_HOK0160"),
-      interest: yenField(hok, "ITA_HOK0170"),
-      rent: yenField(hok, "ITA_HOK0180"),
-      retirement: yenField(hok, "ITA_HOK0190"),
-      utilities: yenField(hok, "ITA_HOK0200"),
-      travel: yenField(hok, "ITA_HOK0210"),
-      communication: yenField(hok, "ITA_HOK0220"),
-      advertising: yenField(hok, "ITA_HOK0230"),
-      entertainment: yenField(hok, "ITA_HOK0240"),
-      consumables: yenField(hok, "ITA_HOK0250"),
-      miscellaneous: yenField(hok, "ITA_HOK0260"),
-      otherExpenses: yenField(hok, "ITA_HOK0270"),
-    },
-    totalExpenses: yenField(hok, "ITA_HOK0280"),
-    operatingIncome: yenField(hok, "ITA_HOK0290"),
-    nonOperatingIncome: yenField(hok, "ITA_HOK0300"),
-    nonOperatingExpenses: yenField(hok, "ITA_HOK0310"),
-    ordinaryIncome: yenField(hok, "ITA_HOK0320"),
-    extraordinaryGain: yenField(hok, "ITA_HOK0330"),
-    extraordinaryLoss: yenField(hok, "ITA_HOK0340"),
-    preTaxIncome: yenField(hok, "ITA_HOK0350"),
-    corporateTax: yenField(hok, "ITA_HOK0360"),
-    netIncome: yenField(hok, "ITA_HOK0370"),
+    taxableIncome: yenField(fields, "AAB00010"),
+    corporateTaxAmount: yenField(fields, "AAB00140"),
+    taxCredits: yenField(fields, "AAB00160"),
+    taxDue: yenField(fields, "AAB00190"),
   };
 }
 
-function buildCorporateBalanceSheet(
-  hok: Map<string, string>,
-): CorporateBalanceSheet {
-  return {
-    // Assets
-    cash: accountBalance(hok, "ITA_HOK1010", "ITA_HOK1210"),
-    deposits: accountBalance(hok, "ITA_HOK1020", "ITA_HOK1220"),
-    accountsReceivable: accountBalance(hok, "ITA_HOK1030", "ITA_HOK1230"),
-    inventory: accountBalance(hok, "ITA_HOK1040", "ITA_HOK1240"),
-    otherCurrentAssets: accountBalance(hok, "ITA_HOK1050", "ITA_HOK1250"),
-    buildings: accountBalance(hok, "ITA_HOK1060", "ITA_HOK1260"),
-    buildingImprovements: accountBalance(hok, "ITA_HOK1070", "ITA_HOK1270"),
-    machinery: accountBalance(hok, "ITA_HOK1080", "ITA_HOK1280"),
-    vehicles: accountBalance(hok, "ITA_HOK1090", "ITA_HOK1290"),
-    tools: accountBalance(hok, "ITA_HOK1100", "ITA_HOK1300"),
-    land: accountBalance(hok, "ITA_HOK1110", "ITA_HOK1310"),
-    otherFixedAssets: accountBalance(hok, "ITA_HOK1120", "ITA_HOK1320"),
-    accumulatedDepreciation: accountBalance(hok, "ITA_HOK1130", "ITA_HOK1330"),
-    assetsTotal: accountBalance(hok, "ITA_HOK1140", "ITA_HOK1340"),
-
-    // Liabilities
-    accountsPayable: accountBalance(hok, "ITA_HOK1410", "ITA_HOK1510"),
-    borrowings: accountBalance(hok, "ITA_HOK1420", "ITA_HOK1520"),
-    accruedExpenses: accountBalance(hok, "ITA_HOK1430", "ITA_HOK1530"),
-    corporateTaxPayable: accountBalance(hok, "ITA_HOK1440", "ITA_HOK1540"),
-    otherCurrentLiabilities: accountBalance(hok, "ITA_HOK1450", "ITA_HOK1550"),
-    liabilitiesTotal: accountBalance(hok, "ITA_HOK1460", "ITA_HOK1560"),
-
-    // Net Assets
-    capitalStock: accountBalance(hok, "ITA_HOK1610", "ITA_HOK1710"),
-    capitalSurplus: accountBalance(hok, "ITA_HOK1620", "ITA_HOK1720"),
-    retainedEarnings: accountBalance(hok, "ITA_HOK1630", "ITA_HOK1730"),
-    netIncome: yenField(hok, "ITA_HOK0370"),
-    equityTotal: accountBalance(hok, "ITA_HOK1650", "ITA_HOK1750"),
-  };
-}
-
-function buildCorporateTaxForm(hoa: Map<string, string>): CorporateTaxFormMain {
-  return {
-    taxableIncome: yenField(hoa, "ITA_HOA0010"),
-    corporateTaxAmount: yenField(hoa, "ITA_HOA0020"),
-    taxCredits: yenField(hoa, "ITA_HOA0030"),
-    localCorporateTax: yenField(hoa, "ITA_HOA0040"),
-    taxDue: yenField(hoa, "ITA_HOA0050"),
-  };
-}
-
+/** Build income adjustment schedule from HOA410 fields (official codes). */
 function buildIncomeAdjustment(
-  hod: Map<string, string>,
+  fields: Map<string, string>,
 ): IncomeAdjustmentSchedule {
   return {
-    accountingProfit: yenField(hod, "ITA_HOD0010"),
-    addBackTotal: yenField(hod, "ITA_HOD0020"),
-    deductionTotal: yenField(hod, "ITA_HOD0030"),
-    taxableIncome: yenField(hod, "ITA_HOD0040"),
+    accountingProfit: yenField(fields, "AQB00010"),
+    addBackTotal: yenField(fields, "AQC00330"),
+    deductionTotal: yenField(fields, "AQD00290"),
+    taxableIncome: yenField(fields, "AQV00010"),
   };
 }
 
-function buildCorporateInfo(hok: Map<string, string>): CorporateInfo {
-  const capitalRaw = hok.get("ITA_HOK1710");
-  const capitalAmount = yen(capitalRaw ? Number(capitalRaw) : 0);
-  const monthsRaw = hok.get("ITA_HOK9010");
-  const fiscalYearMonths = monthsRaw ? Number(monthsRaw) : 12;
-  const officerRaw = hok.get("ITA_HOK9020");
-  const officerCount = officerRaw ? Number(officerRaw) : 1;
+function buildCorporateInfoFromBs(
+  balanceSheet: CorporateBalanceSheet,
+): CorporateInfo {
+  const capitalAmount = balanceSheet.capitalStock.closing;
 
   return {
     capitalAmount,
-    fiscalYearMonths,
+    fiscalYearMonths: 12,
     isSmallCorp: capitalAmount <= 10_000_000,
-    officerCount,
+    officerCount: 1,
   };
 }
 
@@ -301,9 +217,9 @@ function buildEmptyDepreciationSchedule(): DepreciationSchedule {
   };
 }
 
-/** Check if the parsed file contains corporate form types (HOK). */
+/** Check if the parsed file contains corporate form types (HOA110). */
 function isCorporateReturn(parsed: ParsedXtxFile): boolean {
-  return parsed.forms.some((f) => f.formType === "HOK");
+  return parsed.forms.some((f) => f.formType === "HOA110");
 }
 
 /** Check if the parsed file contains sole-proprietor form types (VCA). */
@@ -355,23 +271,32 @@ function normalizeIndividual(
   };
 }
 
-/** Normalize as corporate return. */
+/** Normalize as corporate return. CSV is required for B/S and P/L. */
 function normalizeCorporate(
   parsed: ParsedXtxFile,
   formTypes: FormType[],
+  csvData?: CorporateFinancials,
 ): CorporateReturn {
-  const hok = getFormFields(parsed, "HOK");
-  const hoa = getFormFields(parsed, "HOA");
-  const hod = getFormFields(parsed, "HOD");
+  if (!csvData) {
+    throw new Error(
+      "法人申告の検証にはCSVファイル（HOT010形式）が必要です。--csv オプションで指定してください。",
+    );
+  }
+
+  const balanceSheet = csvData.balanceSheet;
+  const incomeStatement = csvData.incomeStatement;
+
+  const corporateTaxForm = buildCorporateTaxForm(getFormFields(parsed, "HOA110"));
+  const incomeAdjustment = buildIncomeAdjustment(getFormFields(parsed, "HOA410"));
 
   return {
     returnType: "corporate",
     fiscalYear: buildDefaultFiscalYear(),
-    incomeStatement: buildCorporateIncomeStatement(hok),
-    balanceSheet: buildCorporateBalanceSheet(hok),
-    corporateTaxForm: buildCorporateTaxForm(hoa),
-    incomeAdjustment: buildIncomeAdjustment(hod),
-    corporateInfo: buildCorporateInfo(hok),
+    incomeStatement,
+    balanceSheet,
+    corporateTaxForm,
+    incomeAdjustment,
+    corporateInfo: buildCorporateInfoFromBs(balanceSheet),
     depreciationSchedule: buildEmptyDepreciationSchedule(),
     metadata: {
       filePath: "",
@@ -384,15 +309,20 @@ function normalizeCorporate(
  * Convert a ParsedXtxFile into a typed TaxReturn.
  *
  * Detection order:
- *   1. HOK form present → corporate
- *   2. VCA form present → sole-proprietor (個人事業主)
- *   3. Otherwise        → individual (給与所得者等)
+ *   1. HOA110 form present → corporate
+ *   2. VCA form present   → sole-proprietor (個人事業主)
+ *   3. Otherwise           → individual (給与所得者等)
+ *
+ * @param csvData Corporate financial data from CSV (required for corporate returns)
  */
-export function normalize(parsed: ParsedXtxFile): TaxReturn {
+export function normalize(
+  parsed: ParsedXtxFile,
+  csvData?: CorporateFinancials,
+): TaxReturn {
   const formTypes = detectForms(parsed);
 
   if (isCorporateReturn(parsed)) {
-    return normalizeCorporate(parsed, formTypes);
+    return normalizeCorporate(parsed, formTypes, csvData);
   }
 
   if (isSoleProprietorReturn(parsed)) {

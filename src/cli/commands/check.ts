@@ -7,6 +7,7 @@ import { getFormatter } from "../formatter/index.js";
 export interface CheckOptions {
   format?: string;
   config?: string;
+  csv?: string;
   priorYear?: string;
   severity?: string;
   color?: boolean;
@@ -25,8 +26,8 @@ export async function checkCommand(
     format: (options.format as "stylish" | "json") ?? config.format,
   };
 
-  // Parse the file
-  const taxReturn = await parseXtxFile(filePath);
+  // Parse the file (with optional CSV for corporate financials)
+  const taxReturn = await parseXtxFile(filePath, options.csv);
 
   // Parse prior year if provided
   const priorYearPath = options.priorYear ?? config.priorYearFile;

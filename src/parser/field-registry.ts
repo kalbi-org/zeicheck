@@ -5,17 +5,15 @@
 import { abaFieldMap } from "./mappings/aba-fields.js";
 import { abbFieldMap } from "./mappings/abb-fields.js";
 import { vcaFieldMap } from "./mappings/vca-fields.js";
-import { hoaFieldMap } from "./mappings/hoa-fields.js";
-import { hodFieldMap } from "./mappings/hod-fields.js";
-import { hokFieldMap } from "./mappings/hok-fields.js";
+import { hoa110FieldMap } from "./mappings/hoa110-fields.js";
+import { hoa410FieldMap } from "./mappings/hoa410-fields.js";
 
 const registries: ReadonlyMap<string, ReadonlyMap<string, string>> = new Map([
   ["ABA", abaFieldMap],
   ["ABB", abbFieldMap],
   ["VCA", vcaFieldMap],
-  ["HOA", hoaFieldMap],
-  ["HOD", hodFieldMap],
-  ["HOK", hokFieldMap],
+  ["HOA110", hoa110FieldMap],
+  ["HOA410", hoa410FieldMap],
 ]);
 
 /** Look up the Japanese name for a field code within a form type. */

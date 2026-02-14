@@ -23,7 +23,13 @@ export type {
 export { FormType, yen } from "./models/index.js";
 
 // Parser
-export { parseXtxFile, parseXtxString } from "./parser/index.js";
+export {
+  parseXtxFile,
+  parseXtxString,
+  readCorporateCsv,
+  parseCorporateCsvString,
+} from "./parser/index.js";
+export type { CorporateFinancials } from "./parser/index.js";
 
 // Rules
 export { getAllRules, getRule, runRules } from "./rules/index.js";

@@ -32,7 +32,7 @@ describe("CLI integration", () => {
 
   it("shows version with --version", async () => {
     const { stdout } = await runCli(["--version"]);
-    expect(stdout).toContain("0.1.0");
+    expect(stdout).toContain("0.4.0");
   });
 
   it("list-rules shows available rules", async () => {
@@ -60,12 +60,23 @@ describe("CLI integration", () => {
     expect(exitCode).toBe(0);
   });
 
-  it("check validates a valid corporate return with exit code 0", async () => {
+  it("check validates a valid corporate return with CSV with exit code 0", async () => {
     const { exitCode } = await runCli([
       "check",
       resolve(FIXTURES, "valid-corporate-return.xtx"),
+      "--csv",
+      resolve(FIXTURES, "valid-corporate-financials.csv"),
     ]);
     expect(exitCode).toBe(0);
+  });
+
+  it("check fails for corporate return without CSV", async () => {
+    const { exitCode, stderr } = await runCli([
+      "check",
+      resolve(FIXTURES, "valid-corporate-return.xtx"),
+    ]);
+    expect(exitCode).not.toBe(0);
+    expect(stderr).toContain("--csv");
   });
 
   it("check validates a valid individual (wage earner) return with exit code 0", async () => {

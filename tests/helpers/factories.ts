@@ -318,7 +318,6 @@ export function buildCorporateTaxForm(
     taxableIncome: yen(4400000),
     corporateTaxAmount: yen(660000),
     taxCredits: yen(0),
-    localCorporateTax: yen(69300),
     taxDue: yen(660000),
     ...overrides,
   };
@@ -374,7 +373,7 @@ export function buildCorporateReturn(
     ),
     metadata: {
       filePath: "test-corp.xtx",
-      formTypes: [FormType.HOA, FormType.HOD, FormType.HOK],
+      formTypes: [FormType.HOA110, FormType.HOA410],
       ...(overrides?.metadata as Partial<CorporateReturn["metadata"]>),
     },
   };

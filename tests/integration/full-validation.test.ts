@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseXtxString } from "../../src/parser/index.js";
+import { parseCorporateCsvString } from "../../src/parser/csv-reader.js";
 import { getAllRules, runRules } from "../../src/rules/index.js";
 import type { ResolvedConfig } from "../../src/rules/types.js";
 import { readFileSync } from "node:fs";
@@ -57,5 +58,15 @@ describe("full validation pipeline", () => {
       (d) => d.ruleId === "balance-sheet/equation",
     );
     expect(bsErrors).toEqual([]);
+  });
+
+  it("valid corporate return with HOA110/HOA410 + CSV produces no errors", () => {
+    const xml = readFixture("valid-corporate-return.xtx");
+    const csvContent = readFixture("valid-corporate-financials.csv");
+    const csvData = parseCorporateCsvString(csvContent);
+    const taxReturn = parseXtxString(xml, csvData);
+    const diagnostics = runRules(getAllRules(), { taxReturn, config });
+    const errors = diagnostics.filter((d) => d.severity === "error");
+    expect(errors).toEqual([]);
   });
 });

@@ -3,7 +3,9 @@ import { normalize } from "../../../src/parser/normalizer.js";
 import { readXtxString } from "../../../src/parser/xtx-reader.js";
 import { readXtxFile } from "../../../src/parser/xtx-reader.js";
 import { FormType } from "../../../src/models/types.js";
+import { parseCorporateCsvString } from "../../../src/parser/csv-reader.js";
 import { resolve } from "node:path";
+import { readFileSync } from "node:fs";
 
 const FIXTURES_DIR = resolve(__dirname, "../../fixtures");
 
@@ -118,5 +120,71 @@ describe("normalize", () => {
     // Total says 3500000 but real sum of expenses is 4000000
     expect(result.incomeStatement.totalExpenses).toBe(3500000);
     expect(result.incomeStatement.expenses.salaries).toBe(1200000);
+  });
+
+  // ── Corporate normalization ──
+
+  it("normalizes a corporate return (HOA110/HOA410) with CSV", () => {
+    const xml = readFileSync(
+      resolve(FIXTURES_DIR, "valid-corporate-return.xtx"),
+      "utf-8",
+    );
+    const csvContent = readFileSync(
+      resolve(FIXTURES_DIR, "valid-corporate-financials.csv"),
+      "utf-8",
+    );
+
+    const parsed = readXtxString(xml);
+    const csvData = parseCorporateCsvString(csvContent);
+    const result = normalize(parsed, csvData);
+
+    expect(result.returnType).toBe("corporate");
+    if (result.returnType !== "corporate") return;
+
+    // B/S from CSV
+    expect(result.balanceSheet.cash.opening).toBe(300000);
+    expect(result.balanceSheet.cash.closing).toBe(500000);
+    expect(result.balanceSheet.deposits.closing).toBe(6000000);
+    expect(result.balanceSheet.assetsTotal.closing).toBe(6500000);
+    expect(result.balanceSheet.capitalStock.closing).toBe(1000000);
+    expect(result.balanceSheet.retainedEarnings.closing).toBe(5500000);
+
+    // P/L from CSV
+    expect(result.incomeStatement.revenue).toBe(5000000);
+    expect(result.incomeStatement.totalExpenses).toBe(600000);
+    expect(result.incomeStatement.operatingIncome).toBe(4400000);
+    expect(result.incomeStatement.netIncome).toBe(3500000);
+
+    // Tax form from HOA110
+    expect(result.corporateTaxForm.taxableIncome).toBe(4400000);
+    expect(result.corporateTaxForm.corporateTaxAmount).toBe(660000);
+    expect(result.corporateTaxForm.taxDue).toBe(660000);
+
+    // Income adjustment from HOA410
+    expect(result.incomeAdjustment.accountingProfit).toBe(4400000);
+    expect(result.incomeAdjustment.taxableIncome).toBe(4400000);
+
+    // Corporate info derived from B/S
+    expect(result.corporateInfo.capitalAmount).toBe(1000000);
+    expect(result.corporateInfo.isSmallCorp).toBe(true);
+
+    // Form types
+    expect(result.metadata.formTypes).toContain(FormType.HOA110);
+    expect(result.metadata.formTypes).toContain(FormType.HOA410);
+  });
+
+  it("throws error for corporate return without CSV", () => {
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="HOA110">
+    <Field id="AAB00010">1000000</Field>
+    <Field id="AAB00140">150000</Field>
+    <Field id="AAB00160">0</Field>
+    <Field id="AAB00190">150000</Field>
+  </FormData>
+</DataRoot>`;
+
+    const parsed = readXtxString(xml);
+    expect(() => normalize(parsed)).toThrow("--csv");
   });
 });

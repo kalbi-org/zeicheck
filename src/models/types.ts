@@ -39,12 +39,10 @@ export enum FormType {
   ABB = "ABB",
   /** 青色申告決算書（一般用） */
   VCA = "VCA",
-  /** 法人税申告書 別表一 */
-  HOA = "HOA",
+  /** 法人税申告書 別表一(一) */
+  HOA110 = "HOA110",
   /** 法人税申告書 別表四 */
-  HOD = "HOD",
-  /** 法人決算書 */
-  HOK = "HOK",
+  HOA410 = "HOA410",
 }
 
 /** Metadata about the tax return */

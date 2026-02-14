@@ -4,13 +4,12 @@
 
 import type { Yen } from "./types.js";
 
-/** 法人税申告書 別表一（各事業年度の所得に係る申告書） */
+/** 法人税申告書 別表一(一)（各事業年度の所得に係る申告書） HOA110 */
 export interface CorporateTaxFormMain {
-  readonly taxableIncome: Yen;         // 所得金額
-  readonly corporateTaxAmount: Yen;    // 法人税額
-  readonly taxCredits: Yen;            // 控除税額
-  readonly localCorporateTax: Yen;     // 地方法人税
-  readonly taxDue: Yen;               // 差引確定法人税額
+  readonly taxableIncome: Yen;         // 所得金額 (AAB00010)
+  readonly corporateTaxAmount: Yen;    // 法人税額計 (AAB00140)
+  readonly taxCredits: Yen;            // 控除税額 (AAB00160)
+  readonly taxDue: Yen;               // 差引確定法人税額 (AAB00190)
 }
 
 /** 法人税申告書 別表四（所得の金額の計算に関する明細書） */

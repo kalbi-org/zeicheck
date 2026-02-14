@@ -9,9 +9,8 @@ const knownForms: ReadonlyMap<string, FormType> = new Map([
   ["ABA", FormType.ABA],
   ["ABB", FormType.ABB],
   ["VCA", FormType.VCA],
-  ["HOA", FormType.HOA],
-  ["HOD", FormType.HOD],
-  ["HOK", FormType.HOK],
+  ["HOA110", FormType.HOA110],
+  ["HOA410", FormType.HOA410],
 ]);
 
 /** Detect FormType enum values from parsed forms. */

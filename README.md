@@ -25,10 +25,12 @@ zeicheck check 給与所得者申告データ.xtx
 ### 法人（マイクロ法人）
 
 ```bash
-zeicheck check 法人申告データ.xtx
+zeicheck check 法人申告データ.xtx --csv 決算書.csv
 ```
 
-> **自動判別**: XTXファイル内のフォームから申告種別を自動検出します。HOK（法人決算書）→法人、VCA（青色申告決算書）→個人事業主、それ以外→給与所得者。
+法人の検証には `--csv` オプションで決算書CSV（HOT010形式）の指定が必須です。
+
+> **自動判別**: XTXファイル内のフォームから申告種別を自動検出します。HOA110（法人税別表一）→法人、VCA（青色申告決算書）→個人事業主、それ以外→給与所得者。
 
 ### 出力例
 
@@ -49,6 +51,7 @@ zeicheck check 法人申告データ.xtx
 zeicheck check <file.xtx>
   -f, --format <stylish|json>     # 出力形式（デフォルト: stylish）
   -c, --config <path>             # 設定ファイルパス
+  --csv <file.csv>                # 法人決算書CSVファイル（HOT010形式、法人必須）
   --prior-year <file.xtx>         # 前年ファイル（継続性チェック用）
   --severity <error|warning|info> # 最低表示レベル
   --no-color                      # カラー出力を無効化

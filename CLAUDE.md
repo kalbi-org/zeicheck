@@ -33,7 +33,7 @@ src/
 ├── config/                 # .zeicheckrc.json の読み込み・バリデーション（Zod）
 ├── models/                 # ドメインモデル（TaxReturn, BalanceSheet 等）
 ├── parser/                 # XTX パーサー（fast-xml-parser → 正規化）
-│   └── mappings/           # フォームフィールドコード定義（ABA/ABB/VCA）
+│   └── mappings/           # フォームフィールドコード定義（ABA/ABB/VCA/HOA110/HOA410）
 ├── rules/                  # バリデーションルール（カテゴリ別）
 │   ├── balance-sheet/      # 貸借対照表ルール（個人事業主 + 法人共有）
 │   ├── income-statement/   # 損益計算書ルール（個人事業主 + 法人共有）
@@ -50,7 +50,9 @@ src/
 ### 主要な処理フロー
 
 ```
-XTXファイル → readXtxFile() → ParsedXtxFile → normalize() → TaxReturn → runRules() → RuleDiagnostic[]
+XTXファイル → readXtxFile() → ParsedXtxFile ─┐
+CSVファイル → readCorporateCsv() ─────────────┤ (法人のみ)
+                                              └→ normalize() → TaxReturn → runRules() → RuleDiagnostic[]
 ```
 
 ### TaxReturn 判別共用体
@@ -97,9 +99,9 @@ type TaxReturn = SoleProprietorReturn | IndividualReturn | CorporateReturn;
 ### XTX 自動判別ロジック
 
 ```
-HOKフォームあり → corporate
-VCAフォームあり → sole-proprietor
-それ以外       → individual
+HOA110フォームあり → corporate
+VCAフォームあり    → sole-proprietor
+それ以外           → individual
 ```
 
 ### ルールの仕組み
@@ -145,7 +147,7 @@ applicableTo: ["individual"];
 
 - **CorporateBalanceSheet**: 資産は個人と同構造。負債に未払費用・未払法人税等を追加。純資産は資本金・資本剰余金・利益剰余金・当期純利益。
 - **CorporateIncomeStatement**: 個人P/Lに加え、営業外損益→経常利益、特別損益→税引前利益、法人税等→当期純利益。
-- **CorporateTaxFormMain**: 別表一（所得金額、法人税額、控除、地方法人税、納付額）
+- **CorporateTaxFormMain**: 別表一（所得金額、法人税額、控除、納付額）
 - **IncomeAdjustmentSchedule**: 別表四（当期利益 + 加算 - 減算 = 所得金額）
 - **CorporateInfo**: 資本金、事業年度月数、中小法人判定、役員数
 
@@ -158,9 +160,9 @@ applicableTo: ["individual"];
 - **VCA**: 青色申告決算書（一般用）— 損益計算書 + 貸借対照表
 - **ABA**: 申告書第一表
 - **ABB**: 申告書第二表
-- **HOA**: 法人税申告書 別表一
-- **HOD**: 法人税申告書 別表四
-- **HOK**: 法人決算書
+- **HOA110**: 法人税申告書 別表一(一)
+- **HOA410**: 法人税申告書 別表四
+- **HOT010**: 法人決算書CSV（B/S・P/L、`--csv` で指定）
 
 ## 新規ルール追加手順
 
@@ -198,4 +200,4 @@ applicableTo: ["individual"];
 
 - ESM (`"type": "module"`)、ターゲット ES2022 / Node 20+
 - TypeScript strict モード（`noUncheckedIndexedAccess` 含む）
-- 依存: commander, fast-xml-parser, picocolors, zod
+- 依存: commander, fast-xml-parser, iconv-lite, picocolors, zod
