@@ -30,6 +30,7 @@ export const cogsCalculationRule: Rule = {
           ruleId: "income-statement/cogs",
           severity: "error",
           message: `売上原価合計(${formatYen(cogs.total)}) ≠ 期首棚卸高(${formatYen(cogs.openingInventory)}) + 仕入金額(${formatYen(cogs.purchases)}) - 期末棚卸高(${formatYen(cogs.closingInventory)})`,
+          expected: `売上原価合計 = ${formatYen(expected)}`,
         },
       ];
     }

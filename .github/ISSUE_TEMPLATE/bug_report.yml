@@ -1,0 +1,60 @@
+name: Bug Report / バグ報告
+description: バグや不具合の報告
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        バグ報告ありがとうございます。以下の情報をできるだけ詳しく記入してください。
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 概要
+      description: どのような問題が発生しましたか？
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      description: 問題を再現する手順を記載してください。
+      placeholder: |
+        1. `zeicheck check sample.xtx` を実行
+        2. ...
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作
+      description: 本来どのように動作すべきですか？
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動作
+      description: 実際にはどうなりましたか？エラーメッセージがあれば貼り付けてください。
+
+  - type: input
+    id: version
+    attributes:
+      label: zeicheck バージョン
+      description: "`zeicheck --version` の出力"
+      placeholder: "0.1.0"
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js バージョン
+      description: "`node --version` の出力"
+      placeholder: "v20.x.x"
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: OS
+      options:
+        - macOS
+        - Windows
+        - Linux

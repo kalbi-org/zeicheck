@@ -26,6 +26,7 @@ export const decisionToReturnRule: Rule = {
         ruleId: this.meta.id,
         severity: this.meta.severity,
         message: `決算書の売上金額(${formatYen(pl.revenue)}) ≠ 申告書の営業等収入(${formatYen(form.businessIncome)})`,
+        expected: `申告書の営業等収入 = ${formatYen(pl.revenue)}`,
       });
     }
 
@@ -37,7 +38,7 @@ export const decisionToReturnRule: Rule = {
         ruleId: this.meta.id,
         severity: this.meta.severity,
         message: `申告書の営業等所得(${formatYen(form.businessProfit)}) ≠ 決算書所得(${formatYen(pl.operatingIncome)}) - 青色控除(${formatYen(form.blueReturnDeduction)})`,
-        details: `期待値: ${formatYen(expectedProfit)}`,
+        expected: `申告書の営業等所得 = ${formatYen(expectedProfit)}`,
       });
     }
 

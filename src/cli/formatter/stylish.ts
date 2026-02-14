@@ -54,6 +54,11 @@ export const stylishFormatter: Formatter = {
       lines.push(
         `  ${ruleId}  ${colorSeverity(diag.severity as Severity)}${" ".repeat(maxSeverityLen - diag.severity.length)}  ${diag.message}`,
       );
+      if (diag.expected) {
+        lines.push(
+          `  ${" ".repeat(maxRuleIdLen)}  ${" ".repeat(maxSeverityLen)}  ${pc.green(`→ ${diag.expected}`)}`,
+        );
+      }
     }
 
     lines.push("");

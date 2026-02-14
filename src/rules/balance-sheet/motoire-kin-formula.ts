@@ -37,6 +37,7 @@ export const motoireKinFormulaRule: Rule = {
           severity: this.meta.severity,
           message: `元入金の期首残高(${formatYen(actual)}) ≠ 繰越計算額(${formatYen(expected)})`,
           details: `計算式: 元入金(前期首)(${formatYen(priorBs.ownerEquity.opening)}) + 所得(前期)(${formatYen(priorBs.retainedEarnings)}) + 事業主借(前期末)(${formatYen(priorBs.ownerContributions.closing)}) - 事業主貸(前期末)(${formatYen(priorBs.ownerDrawings.closing)})`,
+          expected: `元入金の期首残高 = ${formatYen(expected)}`,
         },
       ];
     }

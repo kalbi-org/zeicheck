@@ -52,6 +52,7 @@ export const openingClosingMatchRule: Rule = {
           ruleId: this.meta.id,
           severity: this.meta.severity,
           message: `${label}: 当期首(${formatYen(current.opening)}) ≠ 前期末(${formatYen(prior.closing)})`,
+          expected: `${label}の期首残高 = ${formatYen(prior.closing)}`,
         });
       }
     }

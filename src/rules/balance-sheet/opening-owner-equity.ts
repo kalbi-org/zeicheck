@@ -23,6 +23,7 @@ export const openingOwnerEquityRule: Rule = {
         ruleId: this.meta.id,
         severity: this.meta.severity,
         message: `事業主貸の期首残高が0ではありません: ${formatYen(bs.ownerDrawings.opening)}`,
+        expected: "事業主貸の期首残高 = ¥0",
       });
     }
 
@@ -31,6 +32,7 @@ export const openingOwnerEquityRule: Rule = {
         ruleId: this.meta.id,
         severity: this.meta.severity,
         message: `事業主借の期首残高が0ではありません: ${formatYen(bs.ownerContributions.opening)}`,
+        expected: "事業主借の期首残高 = ¥0",
       });
     }
 

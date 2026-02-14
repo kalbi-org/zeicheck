@@ -42,6 +42,7 @@ export const expenseTotalRule: Rule = {
           ruleId: "income-statement/expense-total",
           severity: "error",
           message: `経費合計(${formatYen(totalExpenses)}) ≠ 各経費項目の合計(${formatYen(computed)})`,
+          expected: `経費合計 = ${formatYen(computed)}`,
         },
       ];
     }

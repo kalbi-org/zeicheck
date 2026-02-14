@@ -28,6 +28,7 @@ export const depreciationSumRule: Rule = {
           ruleId: this.meta.id,
           severity: this.meta.severity,
           message: `減価償却明細の合計(${formatYen(scheduleTotal)}) ≠ P/L減価償却費(${formatYen(plDepreciation)})`,
+          expected: `両方とも同一の値であるべき: ${formatYen(scheduleTotal)}`,
         },
       ];
     }

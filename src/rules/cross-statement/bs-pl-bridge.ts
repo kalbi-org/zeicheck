@@ -20,6 +20,7 @@ export const bsPlBridgeRule: Rule = {
           ruleId: "cross-statement/bs-pl-bridge",
           severity: "error",
           message: `損益計算書の所得金額(${formatYen(plOperating)}) ≠ 貸借対照表の青色申告特別控除前の所得金額(${formatYen(bsRetained as Yen)})`,
+          expected: `両方とも同一の値であるべき: ${formatYen(plOperating)}`,
         },
       ];
     }

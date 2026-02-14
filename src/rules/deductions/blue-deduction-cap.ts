@@ -26,6 +26,7 @@ export const blueDeductionCapRule: Rule = {
           message: `青色申告特別控除額(${formatYen(deduction)}) > 控除前所得(${formatYen(income)})`,
           details:
             "青色申告特別控除額は控除前所得金額が上限です。所得が少ない場合は所得金額までしか控除できません。",
+          expected: `青色申告特別控除額 ≤ ${formatYen(income)}`,
         },
       ];
     }

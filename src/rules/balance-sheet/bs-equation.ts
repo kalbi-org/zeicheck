@@ -1,4 +1,5 @@
 import { formatYen } from "../../utils/monetary.js";
+import { yen } from "../../models/types.js";
 import type { Rule, RuleContext, RuleDiagnostic } from "../types.js";
 
 export const bsEquationRule: Rule = {
@@ -23,6 +24,7 @@ export const bsEquationRule: Rule = {
         ruleId: "balance-sheet/equation",
         severity: "error",
         message: `期末残高: 資産合計(${formatYen(closingAssets)}) ≠ 負債合計(${formatYen(closingLiabilities)}) + 資本合計(${formatYen(closingEquity)})`,
+        expected: `資産合計 = ${formatYen(yen(closingLiabilities + closingEquity))}`,
       });
     }
 
@@ -36,6 +38,7 @@ export const bsEquationRule: Rule = {
         ruleId: "balance-sheet/equation",
         severity: "error",
         message: `期首残高: 資産合計(${formatYen(openingAssets)}) ≠ 負債合計(${formatYen(openingLiabilities)}) + 資本合計(${formatYen(openingEquity)})`,
+        expected: `資産合計 = ${formatYen(yen(openingLiabilities + openingEquity))}`,
       });
     }
 

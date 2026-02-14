@@ -21,6 +21,7 @@ export const plArithmeticChainRule: Rule = {
         ruleId: "income-statement/pl-chain",
         severity: "error",
         message: `売上総利益(${formatYen(pl.grossProfit)}) ≠ 売上(${formatYen(pl.revenue)}) - 売上原価(${formatYen(pl.cogs.total)})`,
+        expected: `売上総利益 = ${formatYen(expectedGross)}`,
       });
     }
 
@@ -31,6 +32,7 @@ export const plArithmeticChainRule: Rule = {
         ruleId: "income-statement/pl-chain",
         severity: "error",
         message: `所得金額(${formatYen(pl.operatingIncome)}) ≠ 売上総利益(${formatYen(pl.grossProfit)}) - 経費合計(${formatYen(pl.totalExpenses)})`,
+        expected: `所得金額 = ${formatYen(expectedOperating)}`,
       });
     }
 

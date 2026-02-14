@@ -15,6 +15,7 @@ export interface RuleDiagnostic {
   readonly severity: Severity;
   readonly message: string;
   readonly details?: string;
+  readonly expected?: string;
 }
 
 export interface RuleConfig {
