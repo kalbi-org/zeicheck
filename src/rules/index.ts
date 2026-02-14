@@ -31,6 +31,14 @@ import { yearOverYearChangeRule } from "./continuity/year-over-year-change.js";
 // Home office rules
 import { reasonableRatioRule } from "./home-office/reasonable-ratio.js";
 
+// Individual (wage earner) rules
+import {
+  basicDeductionRule,
+  deductionTotalRule,
+  taxableIncomeRule,
+  withholdingTotalRule,
+} from "./individual/index.js";
+
 // Corporate rules
 import {
   corporateBsEquationRule,
@@ -80,6 +88,12 @@ registerRule(openingClosingMatchRule);
 registerRule(yearOverYearChangeRule);
 registerRule(reasonableRatioRule);
 
+// Register individual (wage earner) rules
+registerRule(basicDeductionRule);
+registerRule(deductionTotalRule);
+registerRule(taxableIncomeRule);
+registerRule(withholdingTotalRule);
+
 // Register corporate rules
 registerRule(corporateBsEquationRule);
 registerRule(corporatePlChainRule);
@@ -94,5 +108,13 @@ registerRule(entertainmentLimitRule);
 registerRule(smallCorpTaxRateRule);
 registerRule(retainedEarningsContinuityRule);
 
-export type { Rule, RuleContext, RuleConfig, ResolvedConfig, RuleDiagnostic, RuleMeta, Severity } from "./types.js";
+export type {
+  Rule,
+  RuleContext,
+  RuleConfig,
+  ResolvedConfig,
+  RuleDiagnostic,
+  RuleMeta,
+  Severity,
+} from "./types.js";
 export { runRules } from "./rule-runner.js";

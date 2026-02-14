@@ -94,8 +94,11 @@ zeicheck explain <rule-id>
 | 家事按分妥当性            |     ✅     |     —      |  —   |
 | 役員報酬妥当性            |     —      |     —      |  ✅  |
 | 資本金1000万以下          |     —      |     —      |  ✅  |
-
-> **注**: 給与所得者向けルールは今後追加予定です（源泉徴収税額検証、基礎控除確認等）。
+| **給与所得者向け**        |            |            |      |
+| 基礎控除額確認            |     —      |     ✅     |  —   |
+| 所得控除合計チェック      |     —      |     ✅     |  —   |
+| 課税所得計算              |     —      |     ✅     |  —   |
+| 源泉徴収税額整合性        |     —      |     ✅     |  —   |
 
 ## ルール一覧
 
@@ -103,19 +106,19 @@ zeicheck explain <rule-id>
 
 #### 貸借対照表 (Balance Sheet)
 
-| ルールID                             | 説明                           | 重要度  |
+| ルールID                             | 説明                           | 重要度  | 備考  |
 | ------------------------------------ | ------------------------------ | ------- | ----- |
 | `balance-sheet/equation`             | 資産合計 = 負債合計 + 資本合計 | error   | ※共有 |
-| `balance-sheet/opening-owner-equity` | 事業主貸/借の期首残高が0       | error   |
-| `balance-sheet/motoire-kin-formula`  | 元入金繰越計算の検証           | error   |
+| `balance-sheet/opening-owner-equity` | 事業主貸/借の期首残高が0       | error   |       |
+| `balance-sheet/motoire-kin-formula`  | 元入金繰越計算の検証           | error   |       |
 | `balance-sheet/non-negative-cash`    | 現金残高が負でないか           | warning | ※共有 |
 
 #### 損益計算書 (Income Statement)
 
-| ルールID                         | 説明                | 重要度 |
+| ルールID                         | 説明                | 重要度 | 備考  |
 | -------------------------------- | ------------------- | ------ | ----- |
-| `income-statement/pl-chain`      | P/L各段階の計算検証 | error  |
-| `income-statement/expense-total` | 経費合計の一致      | error  |
+| `income-statement/pl-chain`      | P/L各段階の計算検証 | error  |       |
+| `income-statement/expense-total` | 経費合計の一致      | error  |       |
 | `income-statement/cogs`          | 売上原価の計算検証  | error  | ※共有 |
 
 #### 帳票間整合性 (Cross-Statement)
@@ -152,6 +155,15 @@ zeicheck explain <rule-id>
 | ルールID                       | 説明               | 重要度  |
 | ------------------------------ | ------------------ | ------- |
 | `home-office/reasonable-ratio` | 家事按分率の妥当性 | warning |
+
+### 給与所得者ルール（`applicableTo: ["individual"]`）
+
+| ルールID                       | 説明                           | 重要度  |
+| ------------------------------ | ------------------------------ | ------- |
+| `individual/basic-deduction`   | 基礎控除が標準額（48万円）か   | info    |
+| `individual/deduction-total`   | 所得控除合計の一致             | error   |
+| `individual/taxable-income`    | 課税所得 = 合計所得 − 控除合計 | error   |
+| `individual/withholding-total` | 源泉徴収税額の整合性           | warning |
 
 ### 法人ルール（`applicableTo: ["corporate"]`）
 

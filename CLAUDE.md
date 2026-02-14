@@ -42,6 +42,7 @@ src/
 │   ├── depreciation/       # 減価償却ルール（個人事業主 + 法人共有）
 │   ├── continuity/         # 継続性ルール（個人事業主 + 法人共有）
 │   ├── home-office/        # 家事按分ルール（個人事業主）
+│   ├── individual/         # 給与所得者ルール
 │   └── corporate/          # 法人ルール
 └── utils/                  # ユーティリティ（Yen型、エラー）
 ```
