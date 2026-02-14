@@ -13,15 +13,20 @@ export const reasonableRatioRule: Rule = {
     description:
       "減価償却資産の事業専用割合（家事按分率）が妥当な範囲内かチェックします。デフォルトの上限は90%です。",
     severity: "warning",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const assets = ctx.taxReturn.depreciationSchedule.assets;
 
     const ruleConfig = ctx.config.rules[this.meta.id];
     let maxRatio = DEFAULT_MAX_RATIO;
-    if (Array.isArray(ruleConfig) && typeof ruleConfig[1]?.maxRatio === "number") {
+    if (
+      Array.isArray(ruleConfig) &&
+      typeof ruleConfig[1]?.maxRatio === "number"
+    ) {
       maxRatio = ruleConfig[1].maxRatio;
     }
 

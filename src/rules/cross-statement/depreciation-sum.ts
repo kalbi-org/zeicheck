@@ -12,9 +12,11 @@ export const depreciationSumRule: Rule = {
     description:
       "減価償却明細の必要経費算入額合計が損益計算書の減価償却費と一致するか確認します。",
     severity: "error",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const scheduleTotal =
       ctx.taxReturn.depreciationSchedule.totalBusinessDepreciation;
     const plDepreciation = ctx.taxReturn.incomeStatement.expenses.depreciation;

@@ -8,9 +8,11 @@ export const cogsCalculationRule: Rule = {
     name: "COGS Calculation",
     description: "売上原価の計算を検証する",
     severity: "error",
+    applicableTo: ["sole-proprietor", "corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType === "individual") return [];
     const cogs = ctx.taxReturn.incomeStatement.cogs;
 
     // Skip if all COGS values are zero
@@ -23,7 +25,9 @@ export const cogsCalculationRule: Rule = {
       return [];
     }
 
-    const expected = (cogs.openingInventory + cogs.purchases - cogs.closingInventory) as Yen;
+    const expected = (cogs.openingInventory +
+      cogs.purchases -
+      cogs.closingInventory) as Yen;
     if (cogs.total !== expected) {
       return [
         {

@@ -1,0 +1,250 @@
+name: Tax Compliance Audit
+
+on:
+  schedule:
+    # 毎月1日 00:00 UTC（09:00 JST）
+    - cron: "0 0 1 * *"
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  tax-compliance-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # -------------------------------------------------------
+      # ルール分析スクリプト
+      # -------------------------------------------------------
+      - name: Analyze rules
+        id: analyze
+        run: |
+          cat << 'SCRIPT_EOF' > /tmp/analyze-rules.mjs
+          import { getAllRules } from './dist/index.js';
+
+          // 税年度計算: 1〜3月は前年度、4月以降は当年度
+          const now = new Date();
+          const jstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+          const year = jstNow.getFullYear();
+          const month = jstNow.getMonth() + 1; // 1-indexed
+          const currentTaxYear = month <= 3 ? year - 1 : year;
+          const nextTaxYear = currentTaxYear + 1;
+
+          const rules = getAllRules();
+          const totalRules = rules.length;
+
+          // applicableYears 未設定のルール
+          const noYearRules = rules.filter(r => !r.meta.applicableYears || r.meta.applicableYears.length === 0);
+
+          // 現在の税年度に未対応のルール（applicableYears が設定されているが現在年度を含まない）
+          const notCurrentYear = rules.filter(r =>
+            r.meta.applicableYears &&
+            r.meta.applicableYears.length > 0 &&
+            !r.meta.applicableYears.includes(currentTaxYear)
+          );
+
+          // 次期税年度に未対応のルール
+          const notNextYear = rules.filter(r =>
+            r.meta.applicableYears &&
+            r.meta.applicableYears.length > 0 &&
+            !r.meta.applicableYears.includes(nextTaxYear)
+          );
+
+          const result = {
+            currentTaxYear,
+            nextTaxYear,
+            totalRules,
+            noYearRules: noYearRules.map(r => ({
+              id: r.meta.id,
+              name: r.meta.name,
+              description: r.meta.description,
+              severity: r.meta.severity,
+            })),
+            notCurrentYear: notCurrentYear.map(r => ({
+              id: r.meta.id,
+              name: r.meta.name,
+              applicableYears: [...r.meta.applicableYears],
+            })),
+            notNextYear: notNextYear.map(r => ({
+              id: r.meta.id,
+              name: r.meta.name,
+              applicableYears: [...r.meta.applicableYears],
+            })),
+          };
+
+          console.log(JSON.stringify(result));
+          SCRIPT_EOF
+
+          ANALYSIS=$(node --input-type=module < /tmp/analyze-rules.mjs)
+          echo "analysis<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$ANALYSIS" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
+
+      # -------------------------------------------------------
+      # GitHub Issue 作成
+      # -------------------------------------------------------
+      - name: Create compliance issue
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          ANALYSIS: ${{ steps.analyze.outputs.analysis }}
+        with:
+          script: |
+            const analysis = JSON.parse(process.env.ANALYSIS || '{}');
+            const {
+              currentTaxYear = '不明',
+              nextTaxYear = '不明',
+              totalRules = 0,
+              noYearRules = [],
+              notCurrentYear = [],
+              notNextYear = [],
+            } = analysis;
+
+            const now = new Date();
+            const jst = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+            const dateStr = jst.toISOString().split('T')[0];
+
+            const hasIssues = noYearRules.length > 0 || notCurrentYear.length > 0 || notNextYear.length > 0;
+            const overallIcon = hasIssues ? '⚠️' : '✅';
+
+            // applicableYears 未設定ルール一覧
+            let noYearSection = '';
+            if (noYearRules.length > 0) {
+              noYearSection = `### ⚠️ applicableYears 未設定のルール（${noYearRules.length}件）
+
+            年度依存の閾値や税率を含むルールで \`applicableYears\` が未設定の場合、税制改正時に対応漏れとなるリスクがあります。
+
+            | ルールID | ルール名 | 重要度 | 説明 |
+            |---|---|---|---|
+            ${noYearRules.map(r => `| \`${r.id}\` | ${r.name} | ${r.severity} | ${r.description} |`).join('\n')}
+            `;
+            } else {
+              noYearSection = `### ✅ applicableYears 未設定のルール
+
+            全てのルールに \`applicableYears\` が設定されています。
+            `;
+            }
+
+            // 現在の税年度に未対応
+            let currentYearSection = '';
+            if (notCurrentYear.length > 0) {
+              currentYearSection = `### ⚠️ ${currentTaxYear}年度（現在）に未対応のルール（${notCurrentYear.length}件）
+
+            | ルールID | ルール名 | 対応年度 |
+            |---|---|---|
+            ${notCurrentYear.map(r => `| \`${r.id}\` | ${r.name} | ${r.applicableYears.join(', ')} |`).join('\n')}
+            `;
+            } else {
+              currentYearSection = `### ✅ ${currentTaxYear}年度（現在）の対応状況
+
+            年度指定のある全ルールが${currentTaxYear}年度に対応しています。
+            `;
+            }
+
+            // 次期税年度に未対応
+            let nextYearSection = '';
+            if (notNextYear.length > 0) {
+              nextYearSection = `### ⚠️ ${nextTaxYear}年度（次期）に未対応のルール（${notNextYear.length}件）
+
+            | ルールID | ルール名 | 対応年度 |
+            |---|---|---|
+            ${notNextYear.map(r => `| \`${r.id}\` | ${r.name} | ${r.applicableYears.join(', ')} |`).join('\n')}
+            `;
+            } else {
+              nextYearSection = `### ✅ ${nextTaxYear}年度（次期）の対応状況
+
+            年度指定のある全ルールが${nextTaxYear}年度に対応しています。
+            `;
+            }
+
+            const title = `${overallIcon} 税制適合性監査レポート — ${dateStr}`;
+
+            const body = `# 税制適合性監査レポート
+
+            **実行日時**: ${jst.toISOString().replace('T', ' ').substring(0, 19)} JST
+            **現在の税年度**: ${currentTaxYear}年度（${currentTaxYear}/1/1 〜 ${currentTaxYear}/12/31）
+            **次期税年度**: ${nextTaxYear}年度
+            **登録ルール数**: ${totalRules}
+            **ワークフロー**: [実行ログ](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
+
+            ---
+
+            ## ルール年度対応状況
+
+            ${noYearSection}
+
+            ${currentYearSection}
+
+            ${nextYearSection}
+
+            ---
+
+            ## 手動確認チェックリスト
+
+            以下の項目について、最新の税制改正情報を確認してください。
+
+            ### 所得税・確定申告関連
+            - [ ] [国税庁 税制改正](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/shotoku.htm) の最新情報を確認
+            - [ ] 基礎控除額の変更有無を確認（現行: 48万円）
+            - [ ] 配偶者控除・配偶者特別控除の所得制限を確認
+            - [ ] 青色申告特別控除額の要件変更を確認（65万円/55万円/10万円）
+            - [ ] 給与所得控除の計算式変更を確認
+            - [ ] 医療費控除の適用要件を確認
+            - [ ] ふるさと納税の控除上限計算を確認
+
+            ### 減価償却関連
+            - [ ] [耐用年数表](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2100.htm) の改正有無を確認
+            - [ ] 少額減価償却資産の特例（30万円未満）の適用期限を確認
+            - [ ] 一括償却資産（20万円未満）の取扱い変更を確認
+
+            ### 法人税関連
+            - [ ] 法人税率の変更を確認（資本金1億円以下: 年800万円以下15%、超19%）
+            - [ ] 交際費の損金算入限度額を確認（800万円 or 接待飲食費50%）
+            - [ ] 役員報酬の損金算入要件の変更を確認
+            - [ ] 中小企業向け特例措置の適用期限を確認
+
+            ### 消費税関連
+            - [ ] インボイス制度に関する経過措置の確認
+            - [ ] 簡易課税のみなし仕入率の変更を確認
+
+            ### その他
+            - [ ] 電子帳簿保存法の要件変更を確認
+            - [ ] e-Tax (xtx) フォーマットの仕様変更を確認
+            `.replace(/^            /gm, '');
+
+            // ラベルを作成（存在しない場合）
+            for (const label of ['audit', 'tax-compliance']) {
+              try {
+                await github.rest.issues.getLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                });
+              } catch {
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label,
+                  color: label === 'tax-compliance' ? 'f59e0b' : '6366f1',
+                  description: label === 'tax-compliance' ? '税制適合性関連' : '自動監査レポート',
+                });
+              }
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['audit', 'tax-compliance'],
+            });

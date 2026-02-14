@@ -4,6 +4,7 @@
 export type {
   AccountBalance,
   BalanceSheet,
+  CorporateReturn,
   CostOfGoodsSold,
   DepreciationAsset,
   DepreciationSchedule,
@@ -11,6 +12,8 @@ export type {
   FiscalYear,
   IncomeDetail,
   IncomeStatement,
+  IndividualReturn,
+  SoleProprietorReturn,
   TaxFormA,
   TaxFormB,
   TaxReturn,
@@ -23,11 +26,7 @@ export { FormType, yen } from "./models/index.js";
 export { parseXtxFile, parseXtxString } from "./parser/index.js";
 
 // Rules
-export {
-  getAllRules,
-  getRule,
-  runRules,
-} from "./rules/index.js";
+export { getAllRules, getRule, runRules } from "./rules/index.js";
 export type {
   ResolvedConfig,
   Rule,

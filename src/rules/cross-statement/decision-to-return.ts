@@ -13,9 +13,11 @@ export const decisionToReturnRule: Rule = {
     description:
       "青色申告決算書の売上金額・所得金額が申告書第一表に正しく転記されているか確認します。",
     severity: "error",
+    applicableTo: ["sole-proprietor"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const pl = ctx.taxReturn.incomeStatement;
     const form = ctx.taxReturn.taxFormA;

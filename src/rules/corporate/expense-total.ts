@@ -2,20 +2,25 @@ import { formatYen } from "../../utils/monetary.js";
 import type { Yen } from "../../models/types.js";
 import type { Rule, RuleContext, RuleDiagnostic } from "../types.js";
 
-export const expenseTotalRule: Rule = {
+/**
+ * corporate/expense-total
+ * 法人販管費の合計検証
+ */
+export const corporateExpenseTotalRule: Rule = {
   meta: {
-    id: "income-statement/expense-total",
-    name: "Expense Total",
-    description: "経費合計が各経費項目の合計と一致するか検証する",
+    id: "corporate/expense-total",
+    name: "法人販管費合計チェック",
+    description: "販売費及び一般管理費の合計が各費目の合計と一致するか検証する",
     severity: "error",
-    applicableTo: ["sole-proprietor"],
+    applicableTo: ["corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
-    if (ctx.taxReturn.returnType !== "sole-proprietor") return [];
+    if (ctx.taxReturn.returnType !== "corporate") return [];
     const exp = ctx.taxReturn.incomeStatement.expenses;
 
-    const computed = (exp.salaries +
+    const computed = (
+      exp.salaries +
       exp.outsourcing +
       exp.retirement +
       exp.rent +
@@ -32,17 +37,18 @@ export const expenseTotalRule: Rule = {
       exp.advertising +
       exp.entertainment +
       exp.miscellaneous +
-      exp.otherExpenses) as Yen;
+      exp.otherExpenses
+    ) as Yen;
 
     const totalExpenses = ctx.taxReturn.incomeStatement.totalExpenses;
 
     if (totalExpenses !== computed) {
       return [
         {
-          ruleId: "income-statement/expense-total",
-          severity: "error",
-          message: `経費合計(${formatYen(totalExpenses)}) ≠ 各経費項目の合計(${formatYen(computed)})`,
-          expected: `経費合計 = ${formatYen(computed)}`,
+          ruleId: this.meta.id,
+          severity: this.meta.severity,
+          message: `販管費合計(${formatYen(totalExpenses)}) ≠ 各費目の合計(${formatYen(computed)})`,
+          expected: `販管費合計 = ${formatYen(computed)}`,
         },
       ];
     }

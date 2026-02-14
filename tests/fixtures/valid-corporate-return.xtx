@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  法人（マイクロ法人）テストデータ — 正式版
+  ITコンサルティング一人法人、資本金100万円、令和5年度（2023年1月〜12月）
+
+  数値設計:
+    P/L: 売上500万 - 販管費60万 = 営業利益440万 = 経常利益 = 税引前利益
+         法人税等90万 → 当期純利益350万
+    B/S: 期首 資産300万 = 純資産300万（資本金100万+利益剰余金200万）
+         期末 資産650万 = 純資産650万（資本金100万+利益剰余金550万）
+         利益剰余金繰越: 200万 + 350万(当期純利益) = 550万
+    別表四: 当期利益440万 + 加算0 - 減算0 = 所得440万
+    別表一: 所得440万 = 別表四所得440万
+
+  全ルール pass を意図:
+    - corporate/bs-equation ✅ 資産=負債+純資産
+    - corporate/pl-chain ✅ 全P/L計算連鎖
+    - corporate/expense-total ✅ 販管費内訳合計=販管費合計
+    - corporate/bs-pl-bridge ✅ B/S当期純利益=P/L当期純利益
+    - corporate/betsu4-accounting-profit ✅ 別表四当期利益=P/L税引前利益
+    - corporate/betsu4-taxable-income ✅ 所得=当期利益+加算-減算
+    - corporate/betsu1-match ✅ 別表一所得=別表四所得
+    - corporate/capital-under-10m ✅ 資本金100万≤1000万
+    - corporate/officer-compensation ✅ 給料0（一人社長は役員報酬を別途処理）
+    - corporate/entertainment-limit ✅ 交際費0≤800万
+    - corporate/small-corp-tax-rate ✅ 所得440万≤800万（軽減税率範囲）
+    - corporate/retained-earnings-continuity ✅ 期末利益剰余金=期首+当期純利益
+-->
+<DataRoot xmlns="urn:tax:etax">
+
+  <!-- ============================================================ -->
+  <!-- HOK: 法人決算書（損益計算書 + 貸借対照表）                    -->
+  <!-- ============================================================ -->
+  <FormData id="HOK">
+
+    <!-- ── 損益計算書 (P/L) ── -->
+
+    <!-- 売上・売上原価 -->
+    <Field id="ITA_HOK0010">5000000</Field>      <!-- 売上高 -->
+    <Field id="ITA_HOK0020">0</Field>             <!-- 期首商品棚卸高 -->
+    <Field id="ITA_HOK0030">0</Field>             <!-- 仕入金額 -->
+    <Field id="ITA_HOK0040">0</Field>             <!-- 期末商品棚卸高 -->
+    <Field id="ITA_HOK0050">0</Field>             <!-- 売上原価: 0+0-0=0 -->
+    <Field id="ITA_HOK0060">5000000</Field>       <!-- 売上総利益: 5,000,000-0=5,000,000 -->
+
+    <!-- 販売費及び一般管理費 -->
+    <Field id="ITA_HOK0100">50000</Field>         <!-- 租税公課 -->
+    <Field id="ITA_HOK0110">0</Field>             <!-- 損害保険料 -->
+    <Field id="ITA_HOK0120">0</Field>             <!-- 修繕費 -->
+    <Field id="ITA_HOK0130">0</Field>             <!-- 減価償却費 -->
+    <Field id="ITA_HOK0140">0</Field>             <!-- 福利厚生費 -->
+    <Field id="ITA_HOK0150">0</Field>             <!-- 給料賃金（一人法人: 役員報酬は別管理） -->
+    <Field id="ITA_HOK0160">0</Field>             <!-- 外注工賃 -->
+    <Field id="ITA_HOK0170">0</Field>             <!-- 利子割引料 -->
+    <Field id="ITA_HOK0180">300000</Field>        <!-- 地代家賃 -->
+    <Field id="ITA_HOK0190">0</Field>             <!-- 退職金 -->
+    <Field id="ITA_HOK0200">60000</Field>         <!-- 水道光熱費 -->
+    <Field id="ITA_HOK0210">40000</Field>         <!-- 旅費交通費 -->
+    <Field id="ITA_HOK0220">50000</Field>         <!-- 通信費 -->
+    <Field id="ITA_HOK0230">0</Field>             <!-- 広告宣伝費 -->
+    <Field id="ITA_HOK0240">0</Field>             <!-- 接待交際費 -->
+    <Field id="ITA_HOK0250">100000</Field>        <!-- 消耗品費 -->
+    <Field id="ITA_HOK0260">0</Field>             <!-- 雑費 -->
+    <Field id="ITA_HOK0270">0</Field>             <!-- その他経費 -->
+    <Field id="ITA_HOK0280">600000</Field>        <!-- 販管費合計: 50K+300K+60K+40K+50K+100K=600K -->
+    <Field id="ITA_HOK0290">4400000</Field>       <!-- 営業利益: 5,000,000-600,000=4,400,000 -->
+
+    <!-- 営業外損益・特別損益 -->
+    <Field id="ITA_HOK0300">0</Field>             <!-- 営業外収益 -->
+    <Field id="ITA_HOK0310">0</Field>             <!-- 営業外費用 -->
+    <Field id="ITA_HOK0320">4400000</Field>       <!-- 経常利益: 4,400,000+0-0=4,400,000 -->
+    <Field id="ITA_HOK0330">0</Field>             <!-- 特別利益 -->
+    <Field id="ITA_HOK0340">0</Field>             <!-- 特別損失 -->
+    <Field id="ITA_HOK0350">4400000</Field>       <!-- 税引前当期純利益: 4,400,000+0-0=4,400,000 -->
+    <Field id="ITA_HOK0360">900000</Field>        <!-- 法人税・住民税・事業税 -->
+    <Field id="ITA_HOK0370">3500000</Field>       <!-- 当期純利益: 4,400,000-900,000=3,500,000 -->
+
+    <!-- ── 貸借対照表 (B/S) ── -->
+
+    <!-- 資産の部 期首 -->
+    <Field id="ITA_HOK1010">300000</Field>        <!-- 現金（期首） -->
+    <Field id="ITA_HOK1020">2700000</Field>       <!-- 預金（期首） -->
+    <Field id="ITA_HOK1030">0</Field>             <!-- 売掛金（期首） -->
+    <Field id="ITA_HOK1040">0</Field>             <!-- 棚卸資産（期首） -->
+    <Field id="ITA_HOK1050">0</Field>             <!-- その他流動資産（期首） -->
+    <Field id="ITA_HOK1060">0</Field>             <!-- 建物（期首） -->
+    <Field id="ITA_HOK1070">0</Field>             <!-- 建物附属設備（期首） -->
+    <Field id="ITA_HOK1080">0</Field>             <!-- 機械装置（期首） -->
+    <Field id="ITA_HOK1090">0</Field>             <!-- 車両運搬具（期首） -->
+    <Field id="ITA_HOK1100">0</Field>             <!-- 工具器具備品（期首） -->
+    <Field id="ITA_HOK1110">0</Field>             <!-- 土地（期首） -->
+    <Field id="ITA_HOK1120">0</Field>             <!-- その他固定資産（期首） -->
+    <Field id="ITA_HOK1130">0</Field>             <!-- 減価償却累計額（期首） -->
+    <Field id="ITA_HOK1140">3000000</Field>       <!-- 資産合計（期首）: 300K+2,700K=3,000K -->
+
+    <!-- 資産の部 期末 -->
+    <Field id="ITA_HOK1210">500000</Field>        <!-- 現金（期末） -->
+    <Field id="ITA_HOK1220">6000000</Field>       <!-- 預金（期末） -->
+    <Field id="ITA_HOK1230">0</Field>             <!-- 売掛金（期末） -->
+    <Field id="ITA_HOK1240">0</Field>             <!-- 棚卸資産（期末） -->
+    <Field id="ITA_HOK1250">0</Field>             <!-- その他流動資産（期末） -->
+    <Field id="ITA_HOK1260">0</Field>             <!-- 建物（期末） -->
+    <Field id="ITA_HOK1270">0</Field>             <!-- 建物附属設備（期末） -->
+    <Field id="ITA_HOK1280">0</Field>             <!-- 機械装置（期末） -->
+    <Field id="ITA_HOK1290">0</Field>             <!-- 車両運搬具（期末） -->
+    <Field id="ITA_HOK1300">0</Field>             <!-- 工具器具備品（期末） -->
+    <Field id="ITA_HOK1310">0</Field>             <!-- 土地（期末） -->
+    <Field id="ITA_HOK1320">0</Field>             <!-- その他固定資産（期末） -->
+    <Field id="ITA_HOK1330">0</Field>             <!-- 減価償却累計額（期末） -->
+    <Field id="ITA_HOK1340">6500000</Field>       <!-- 資産合計（期末）: 500K+6,000K=6,500K -->
+
+    <!-- 負債の部 期首 -->
+    <Field id="ITA_HOK1410">0</Field>             <!-- 買掛金（期首） -->
+    <Field id="ITA_HOK1420">0</Field>             <!-- 借入金（期首） -->
+    <Field id="ITA_HOK1430">0</Field>             <!-- 未払費用（期首） -->
+    <Field id="ITA_HOK1440">0</Field>             <!-- 未払法人税等（期首） -->
+    <Field id="ITA_HOK1450">0</Field>             <!-- その他流動負債（期首） -->
+    <Field id="ITA_HOK1460">0</Field>             <!-- 負債合計（期首） -->
+
+    <!-- 負債の部 期末 -->
+    <Field id="ITA_HOK1510">0</Field>             <!-- 買掛金（期末） -->
+    <Field id="ITA_HOK1520">0</Field>             <!-- 借入金（期末） -->
+    <Field id="ITA_HOK1530">0</Field>             <!-- 未払費用（期末） -->
+    <Field id="ITA_HOK1540">0</Field>             <!-- 未払法人税等（期末） -->
+    <Field id="ITA_HOK1550">0</Field>             <!-- その他流動負債（期末） -->
+    <Field id="ITA_HOK1560">0</Field>             <!-- 負債合計（期末） -->
+
+    <!-- 純資産の部 期首 -->
+    <Field id="ITA_HOK1610">1000000</Field>       <!-- 資本金（期首）: 100万円 -->
+    <Field id="ITA_HOK1620">0</Field>             <!-- 資本剰余金（期首） -->
+    <Field id="ITA_HOK1630">2000000</Field>       <!-- 利益剰余金（期首） -->
+    <Field id="ITA_HOK1650">3000000</Field>       <!-- 純資産合計（期首）: 1,000K+0+2,000K=3,000K -->
+
+    <!-- 純資産の部 期末 -->
+    <Field id="ITA_HOK1710">1000000</Field>       <!-- 資本金（期末）: 変動なし -->
+    <Field id="ITA_HOK1720">0</Field>             <!-- 資本剰余金（期末） -->
+    <Field id="ITA_HOK1730">5500000</Field>       <!-- 利益剰余金（期末）: 2,000K+3,500K(当期純利益)=5,500K -->
+    <Field id="ITA_HOK1750">6500000</Field>       <!-- 純資産合計（期末）: 1,000K+0+5,500K=6,500K -->
+
+    <!-- 法人情報 -->
+    <Field id="ITA_HOK9010">12</Field>            <!-- 事業年度月数 -->
+    <Field id="ITA_HOK9020">1</Field>             <!-- 役員数（一人法人） -->
+  </FormData>
+
+  <!-- ============================================================ -->
+  <!-- HOA: 法人税申告書 別表一                                      -->
+  <!-- ============================================================ -->
+  <FormData id="HOA">
+    <Field id="ITA_HOA0010">4400000</Field>       <!-- 所得金額又は欠損金額: =別表四所得 -->
+    <Field id="ITA_HOA0020">660000</Field>        <!-- 法人税額: 4,400,000×15%=660,000 -->
+    <Field id="ITA_HOA0030">0</Field>             <!-- 控除税額 -->
+    <Field id="ITA_HOA0040">69300</Field>         <!-- 地方法人税額: 660,000×10.3%≈67,980→69,300 -->
+    <Field id="ITA_HOA0050">660000</Field>        <!-- 差引確定法人税額 -->
+  </FormData>
+
+  <!-- ============================================================ -->
+  <!-- HOD: 法人税申告書 別表四（所得の金額の計算に関する明細書）      -->
+  <!-- ============================================================ -->
+  <FormData id="HOD">
+    <Field id="ITA_HOD0010">4400000</Field>       <!-- 当期利益又は当期欠損の額: =P/L税引前純利益 -->
+    <Field id="ITA_HOD0020">0</Field>             <!-- 加算項目合計 -->
+    <Field id="ITA_HOD0030">0</Field>             <!-- 減算項目合計 -->
+    <Field id="ITA_HOD0040">4400000</Field>       <!-- 所得金額: 4,400,000+0-0=4,400,000 -->
+  </FormData>
+
+</DataRoot>

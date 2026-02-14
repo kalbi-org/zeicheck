@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="ABA">
+    <!-- 給与所得者の確定申告 -->
+    <Field id="ITA_ABA0010">0</Field>
+    <Field id="ITA_ABA0020">0</Field>
+    <Field id="ITA_ABA0030">0</Field>
+    <Field id="ITA_ABA0110">0</Field>
+    <Field id="ITA_ABA0120">0</Field>
+    <Field id="ITA_ABA0130">5000000</Field>
+    <Field id="ITA_ABA0280">1280000</Field>
+    <Field id="ITA_ABA0290">0</Field>
+    <Field id="ITA_ABA0310">3720000</Field>
+    <Field id="ITA_ABA0320">280500</Field>
+    <Field id="ITA_ABA0360">280500</Field>
+  </FormData>
+  <FormData id="ABB">
+    <Field id="ITA_ABB0010">給与</Field>
+    <Field id="ITA_ABB0020">株式会社テスト</Field>
+    <Field id="ITA_ABB0030">6000000</Field>
+    <Field id="ITA_ABB0040">150000</Field>
+    <Field id="ITA_ABB0110">800000</Field>
+    <Field id="ITA_ABB0120">0</Field>
+    <Field id="ITA_ABB0130">0</Field>
+    <Field id="ITA_ABB0140">0</Field>
+    <Field id="ITA_ABB0210">0</Field>
+    <Field id="ITA_ABB0220">0</Field>
+    <Field id="ITA_ABB0230">480000</Field>
+  </FormData>
+</DataRoot>

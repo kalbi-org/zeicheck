@@ -13,9 +13,11 @@ export const smallAssetThresholdRule: Rule = {
     description:
       "取得価額10万円以下は全額経費、10万円超30万円以下は少額減価償却資産の特例（青色申告者）が適用可能です。",
     severity: "warning",
+    applicableTo: ["sole-proprietor", "corporate"],
   },
 
   check(ctx: RuleContext): RuleDiagnostic[] {
+    if (ctx.taxReturn.returnType === "individual") return [];
     const diagnostics: RuleDiagnostic[] = [];
     const assets = ctx.taxReturn.depreciationSchedule.assets;
     const threshold10 = yen(100000);
