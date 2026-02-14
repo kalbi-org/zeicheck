@@ -1,5 +1,5 @@
 {
-  "name": "zeicheck",
+  "name": "@kalbi/zeicheck",
   "version": "0.1.0",
   "description": "e-Tax (xtx) 確定申告データの整合性チェッカー",
   "type": "module",
@@ -35,8 +35,19 @@
     "税務",
     "バリデーション"
   ],
-  "author": "",
+  "author": "kalbi-org",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalbi-org/zeicheck.git"
+  },
+  "homepage": "https://github.com/kalbi-org/zeicheck#readme",
+  "bugs": {
+    "url": "https://github.com/kalbi-org/zeicheck/issues"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "commander": "^13.1.0",
     "fast-xml-parser": "^5.2.0",
