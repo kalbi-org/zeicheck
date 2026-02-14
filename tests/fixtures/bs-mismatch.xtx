@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="VCA">
+    <!-- P/L (minimal) -->
+    <Field id="ITA_VCA0010">10000000</Field>
+    <Field id="ITA_VCA0050">2900000</Field>
+    <Field id="ITA_VCA0060">7100000</Field>
+    <Field id="ITA_VCA0280">4000000</Field>
+    <Field id="ITA_VCA0290">3100000</Field>
+    <!-- B/S Closing: Assets total does NOT match liabilities + equity -->
+    <Field id="ITA_VCA1210">600000</Field>
+    <Field id="ITA_VCA1220">3500000</Field>
+    <Field id="ITA_VCA1230">900000</Field>
+    <Field id="ITA_VCA1240">600000</Field>
+    <Field id="ITA_VCA1250">200000</Field>
+    <Field id="ITA_VCA1260">5000000</Field>
+    <Field id="ITA_VCA1270">0</Field>
+    <Field id="ITA_VCA1280">0</Field>
+    <Field id="ITA_VCA1290">1500000</Field>
+    <Field id="ITA_VCA1300">400000</Field>
+    <Field id="ITA_VCA1310">0</Field>
+    <Field id="ITA_VCA1320">0</Field>
+    <Field id="ITA_VCA1330">2300000</Field>
+    <!-- Deliberately wrong: should be 10400000 but set to 11000000 -->
+    <Field id="ITA_VCA1340">11000000</Field>
+    <!-- Liabilities Closing -->
+    <Field id="ITA_VCA1510">350000</Field>
+    <Field id="ITA_VCA1520">1800000</Field>
+    <Field id="ITA_VCA1530">250000</Field>
+    <Field id="ITA_VCA1540">2400000</Field>
+    <!-- Equity Closing -->
+    <Field id="ITA_VCA1710">8000000</Field>
+    <Field id="ITA_VCA1720">0</Field>
+    <Field id="ITA_VCA1730">0</Field>
+    <Field id="ITA_VCA1750">8000000</Field>
+  </FormData>
+</DataRoot>

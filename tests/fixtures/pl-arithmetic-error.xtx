@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="VCA">
+    <Field id="ITA_VCA0010">10000000</Field>
+    <Field id="ITA_VCA0020">500000</Field>
+    <Field id="ITA_VCA0030">3000000</Field>
+    <Field id="ITA_VCA0040">600000</Field>
+    <Field id="ITA_VCA0050">2900000</Field>
+    <Field id="ITA_VCA0060">7100000</Field>
+    <!-- Expenses: individual items sum to 4000000 but total says 3500000 -->
+    <Field id="ITA_VCA0100">120000</Field>
+    <Field id="ITA_VCA0110">50000</Field>
+    <Field id="ITA_VCA0120">80000</Field>
+    <Field id="ITA_VCA0130">300000</Field>
+    <Field id="ITA_VCA0140">30000</Field>
+    <Field id="ITA_VCA0150">1200000</Field>
+    <Field id="ITA_VCA0160">500000</Field>
+    <Field id="ITA_VCA0170">60000</Field>
+    <Field id="ITA_VCA0180">600000</Field>
+    <Field id="ITA_VCA0190">0</Field>
+    <Field id="ITA_VCA0200">180000</Field>
+    <Field id="ITA_VCA0210">150000</Field>
+    <Field id="ITA_VCA0220">120000</Field>
+    <Field id="ITA_VCA0230">100000</Field>
+    <Field id="ITA_VCA0240">200000</Field>
+    <Field id="ITA_VCA0250">250000</Field>
+    <Field id="ITA_VCA0260">60000</Field>
+    <Field id="ITA_VCA0270">0</Field>
+    <!-- Wrong total: real sum is 4000000 -->
+    <Field id="ITA_VCA0280">3500000</Field>
+    <Field id="ITA_VCA0290">3600000</Field>
+  </FormData>
+</DataRoot>

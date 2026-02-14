@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="VCA">
+    <Field id="ITA_VCA0010">10000000</Field>
+    <Field id="ITA_VCA0020">500000</Field>
+    <Field id="ITA_VCA0030">3000000</Field>
+    <Field id="ITA_VCA0040">600000</Field>
+    <Field id="ITA_VCA0050">2900000</Field>
+    <Field id="ITA_VCA0060">7100000</Field>
+  </FormData>
+</DataRoot>

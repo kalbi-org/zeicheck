@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DataRoot xmlns="urn:tax:etax">
+  <FormData id="VCA">
+    <!-- P/L -->
+    <Field id="ITA_VCA0010">10000000</Field>
+    <Field id="ITA_VCA0020">500000</Field>
+    <Field id="ITA_VCA0030">3000000</Field>
+    <Field id="ITA_VCA0040">600000</Field>
+    <Field id="ITA_VCA0050">2900000</Field>
+    <Field id="ITA_VCA0060">7100000</Field>
+    <Field id="ITA_VCA0100">120000</Field>
+    <Field id="ITA_VCA0110">50000</Field>
+    <Field id="ITA_VCA0120">80000</Field>
+    <Field id="ITA_VCA0130">0</Field>
+    <Field id="ITA_VCA0140">30000</Field>
+    <Field id="ITA_VCA0150">1200000</Field>
+    <Field id="ITA_VCA0160">500000</Field>
+    <Field id="ITA_VCA0170">60000</Field>
+    <Field id="ITA_VCA0180">600000</Field>
+    <Field id="ITA_VCA0190">0</Field>
+    <Field id="ITA_VCA0200">180000</Field>
+    <Field id="ITA_VCA0210">150000</Field>
+    <Field id="ITA_VCA0220">120000</Field>
+    <Field id="ITA_VCA0230">100000</Field>
+    <Field id="ITA_VCA0240">200000</Field>
+    <Field id="ITA_VCA0250">250000</Field>
+    <Field id="ITA_VCA0260">60000</Field>
+    <Field id="ITA_VCA0270">0</Field>
+    <Field id="ITA_VCA0280">3700000</Field>
+    <Field id="ITA_VCA0290">3400000</Field>
+    <!-- B/S Opening -->
+    <Field id="ITA_VCA1010">500000</Field>
+    <Field id="ITA_VCA1020">3000000</Field>
+    <Field id="ITA_VCA1030">800000</Field>
+    <Field id="ITA_VCA1040">500000</Field>
+    <Field id="ITA_VCA1050">200000</Field>
+    <Field id="ITA_VCA1060">5000000</Field>
+    <Field id="ITA_VCA1070">0</Field>
+    <Field id="ITA_VCA1080">0</Field>
+    <Field id="ITA_VCA1090">1500000</Field>
+    <Field id="ITA_VCA1100">500000</Field>
+    <Field id="ITA_VCA1110">0</Field>
+    <Field id="ITA_VCA1120">0</Field>
+    <Field id="ITA_VCA1130">2000000</Field>
+    <Field id="ITA_VCA1140">10000000</Field>
+    <!-- B/S Closing -->
+    <Field id="ITA_VCA1210">600000</Field>
+    <Field id="ITA_VCA1220">3500000</Field>
+    <Field id="ITA_VCA1230">900000</Field>
+    <Field id="ITA_VCA1240">600000</Field>
+    <Field id="ITA_VCA1250">200000</Field>
+    <Field id="ITA_VCA1260">5000000</Field>
+    <Field id="ITA_VCA1270">0</Field>
+    <Field id="ITA_VCA1280">0</Field>
+    <Field id="ITA_VCA1290">1500000</Field>
+    <Field id="ITA_VCA1300">400000</Field>
+    <Field id="ITA_VCA1310">0</Field>
+    <Field id="ITA_VCA1320">0</Field>
+    <Field id="ITA_VCA1330">2300000</Field>
+    <Field id="ITA_VCA1340">10400000</Field>
+    <!-- Liabilities Opening -->
+    <Field id="ITA_VCA1410">300000</Field>
+    <Field id="ITA_VCA1420">2000000</Field>
+    <Field id="ITA_VCA1430">200000</Field>
+    <Field id="ITA_VCA1440">2500000</Field>
+    <!-- Liabilities Closing -->
+    <Field id="ITA_VCA1510">350000</Field>
+    <Field id="ITA_VCA1520">1800000</Field>
+    <Field id="ITA_VCA1530">250000</Field>
+    <Field id="ITA_VCA1540">2400000</Field>
+    <!-- Equity Opening -->
+    <Field id="ITA_VCA1610">7500000</Field>
+    <Field id="ITA_VCA1620">0</Field>
+    <Field id="ITA_VCA1630">0</Field>
+    <Field id="ITA_VCA1640">3400000</Field>
+    <Field id="ITA_VCA1650">7500000</Field>
+    <!-- Equity Closing -->
+    <Field id="ITA_VCA1710">8000000</Field>
+    <Field id="ITA_VCA1720">0</Field>
+    <Field id="ITA_VCA1730">0</Field>
+    <Field id="ITA_VCA1750">8000000</Field>
+  </FormData>
+  <FormData id="ABA">
+    <Field id="ITA_ABA0010">10000000</Field>
+    <Field id="ITA_ABA0020">0</Field>
+    <Field id="ITA_ABA0030">0</Field>
+    <Field id="ITA_ABA0110">2750000</Field>
+    <Field id="ITA_ABA0120">0</Field>
+    <Field id="ITA_ABA0130">2750000</Field>
+    <Field id="ITA_ABA0280">980000</Field>
+    <Field id="ITA_ABA0290">650000</Field>
+    <Field id="ITA_ABA0310">1770000</Field>
+    <Field id="ITA_ABA0320">89500</Field>
+    <Field id="ITA_ABA0360">89500</Field>
+  </FormData>
+  <FormData id="ABB">
+    <Field id="ITA_ABB0010">営業等</Field>
+    <Field id="ITA_ABB0020">フリーランス業</Field>
+    <Field id="ITA_ABB0030">10000000</Field>
+    <Field id="ITA_ABB0040">0</Field>
+    <Field id="ITA_ABB0110">500000</Field>
+    <Field id="ITA_ABB0120">0</Field>
+    <Field id="ITA_ABB0130">0</Field>
+    <Field id="ITA_ABB0140">0</Field>
+    <Field id="ITA_ABB0210">0</Field>
+    <Field id="ITA_ABB0220">0</Field>
+    <Field id="ITA_ABB0230">480000</Field>
+  </FormData>
+</DataRoot>

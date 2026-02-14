@@ -1,0 +1,45 @@
+{
+  "buildings": {
+    "木造": { "usefulLife": 22, "straightLineRate": 0.046, "decliningRate": null },
+    "木骨モルタル造": { "usefulLife": 20, "straightLineRate": 0.050, "decliningRate": null },
+    "鉄骨鉄筋コンクリート造": { "usefulLife": 47, "straightLineRate": 0.022, "decliningRate": null },
+    "鉄筋コンクリート造": { "usefulLife": 47, "straightLineRate": 0.022, "decliningRate": null },
+    "鉄骨造（4mm超）": { "usefulLife": 34, "straightLineRate": 0.030, "decliningRate": null },
+    "鉄骨造（3mm超4mm以下）": { "usefulLife": 27, "straightLineRate": 0.038, "decliningRate": null },
+    "鉄骨造（3mm以下）": { "usefulLife": 19, "straightLineRate": 0.053, "decliningRate": null }
+  },
+  "buildingImprovements": {
+    "木造": { "usefulLife": 15, "straightLineRate": 0.067, "decliningRate": null },
+    "鉄筋コンクリート造": { "usefulLife": 15, "straightLineRate": 0.067, "decliningRate": null },
+    "その他": { "usefulLife": 15, "straightLineRate": 0.067, "decliningRate": null }
+  },
+  "furniture": {
+    "金属製（事務机等）": { "usefulLife": 15, "straightLineRate": 0.067, "decliningRate": 0.133 },
+    "その他（木製家具等）": { "usefulLife": 8, "straightLineRate": 0.125, "decliningRate": 0.250 },
+    "冷暖房用機器": { "usefulLife": 6, "straightLineRate": 0.167, "decliningRate": 0.333 },
+    "電気冷蔵庫": { "usefulLife": 6, "straightLineRate": 0.167, "decliningRate": 0.333 }
+  },
+  "vehicles": {
+    "普通自動車": { "usefulLife": 6, "straightLineRate": 0.167, "decliningRate": 0.333 },
+    "軽自動車": { "usefulLife": 4, "straightLineRate": 0.250, "decliningRate": 0.500 },
+    "二輪車（排気量125cc超）": { "usefulLife": 3, "straightLineRate": 0.334, "decliningRate": 0.667 },
+    "自転車": { "usefulLife": 2, "straightLineRate": 0.500, "decliningRate": 1.000 }
+  },
+  "tools": {
+    "測定工具": { "usefulLife": 5, "straightLineRate": 0.200, "decliningRate": 0.400 },
+    "治具": { "usefulLife": 3, "straightLineRate": 0.334, "decliningRate": 0.667 }
+  },
+  "computers": {
+    "パソコン": { "usefulLife": 4, "straightLineRate": 0.250, "decliningRate": 0.500 },
+    "サーバー": { "usefulLife": 5, "straightLineRate": 0.200, "decliningRate": 0.400 }
+  },
+  "software": {
+    "自社利用（複写販売用）": { "usefulLife": 3, "straightLineRate": 0.334, "decliningRate": null },
+    "自社利用（その他）": { "usefulLife": 5, "straightLineRate": 0.200, "decliningRate": null }
+  },
+  "machinery": {
+    "食料品製造用": { "usefulLife": 10, "straightLineRate": 0.100, "decliningRate": 0.200 },
+    "印刷用": { "usefulLife": 10, "straightLineRate": 0.100, "decliningRate": 0.200 },
+    "その他": { "usefulLife": 10, "straightLineRate": 0.100, "decliningRate": 0.200 }
+  }
+}
